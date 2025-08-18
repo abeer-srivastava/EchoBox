@@ -28,7 +28,8 @@ function Dashboard() {
     }
     const {data:session}=useSession();
     const user:User=session?.user;  
-    console.log("session ---------------------------",session);
+    // console.log("session ---------------------------",session);
+    // console.log("Userr session============",user);
 
     const form = useForm({
         resolver:zodResolver(acceptMessageSchema)
@@ -42,7 +43,7 @@ function Dashboard() {
     const fetchAcceptMessage=useCallback(async()=>{
         setIsSwitchLoading(true);
         try {
-          console.log("inside the fetch messages")
+          console.log("inside the fetch")
             const response=await axios.get<ApiResponse>(`/api/accepting-messages`)
             setValue("acceptMessages",response.data.isAcceptingMessages ?? false)
         } catch (error) {
@@ -59,12 +60,8 @@ function Dashboard() {
       setIsLoading(true);
       setIsSwitchLoading(true);
       try {
-        const response = await fetch('/api/get-messages', {
-            method: 'GET',
-            credentials: "include"
-          });
-      const data: ApiResponse = await response.json();
-      setMessages(data.messages || []);
+        const response = await axios.get<ApiResponse>('/api/get-messages');
+        setMessages(response.data.messages || []);
         if (refresh) {
           toast('Refreshed Messages',{
             description: 'Showing latest messages',

@@ -7,10 +7,10 @@ import { success } from "zod";
 import mongoose from "mongoose";
 
 export async function GET(request:Request) {
-        const session = await getServerSession({ request, ...authOptions })
-        console.log("here are the sessions that needs to be corrected ======",session);
+        const session = await getServerSession(authOptions)
+        // console.log("here are the sessions that needs to be corrected ======",session);
         const user=session?.user;
-        console.log("User session -----------",user)
+        // console.log("User session -----------",user)
         if(!session || !session.user){
             return Response.json({
                 success:false,
@@ -19,12 +19,27 @@ export async function GET(request:Request) {
         }
         const userId = new mongoose.Types.ObjectId(String(user._id)); //TODO:Check
         try {
-            const user=await UserModel.aggregate([
-                {$match:{_id:userId}},
-                {$unwind:'$messages'},
-                {$sort:{'messages.createdAt':-1}},
-                {$group:{_id:'$_id',messages:{$push:'$messages'}}}
-            ])
+
+
+            // the user aggretion changed from this to the working aggretion currently.  
+            // const user = await UserModel.aggregate([
+            //     { $match: { _id: userId } },
+            //     { $unwind: "$messages" },
+            //     { $sort: { "messages.createdAt": -1 } },
+            //     { $group: { _id: "$_id", messages: { $push: "$messages" } } }
+            // ]);
+            const user = await UserModel.aggregate([
+                { $match: { _id: userId } },
+                {
+                    $project: {
+                        messages: {
+                            $sortArray: { input: "$messages", sortBy: { createdAt: -1 } }
+                        }
+                    }
+                },
+                
+            ]);
+            // console.log("User inside the getmessage api inside the try ",user);
             if(!user || user.length===0){
                 return Response.json({
                     success:false,
