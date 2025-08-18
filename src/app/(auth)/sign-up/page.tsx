@@ -151,7 +151,7 @@ function Page() {
                 </FormItem>
               )}
             />
-            <Button  variant="default" className="p-4 m-2 " type="submit" disabled={isSubmitting} >
+            <Button  variant="default" className="p-4 w-full" type="submit" disabled={isSubmitting} >
                 {!isSubmitting?("SignUp"):(<><Loader className="mr-2 h-4 w-4 animate-spin"/>Please Wait</>)}
             </Button>
           </form>

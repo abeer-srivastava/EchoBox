@@ -9,6 +9,7 @@ export async function POST(request: Request) {
   await dbConnection();
 
   const session = await getServerSession(authOptions);
+  console.log("session in accepting route --------------",session);
   const user: User = session?.user;
 
   if (!session || !session.user) {

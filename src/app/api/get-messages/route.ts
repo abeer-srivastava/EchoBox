@@ -1,14 +1,16 @@
 import dbConnection from "@/lib/dbConnect";
 import UserModel from "@/model/User";
-import { getServerSession } from "next-auth";
+import { getServerSession } from "next-auth/next";
 import { authOptions } from "../auth/[...nextauth]/options";
-import { User } from "next-auth";
+import { Session, User } from "next-auth";
 import { success } from "zod";
 import mongoose from "mongoose";
 
 export async function GET(request:Request) {
-        const session=await getServerSession(authOptions);
+        const session = await getServerSession({ request, ...authOptions })
+        console.log("here are the sessions that needs to be corrected ======",session);
         const user=session?.user;
+        console.log("User session -----------",user)
         if(!session || !session.user){
             return Response.json({
                 success:false,
@@ -18,7 +20,7 @@ export async function GET(request:Request) {
         const userId = new mongoose.Types.ObjectId(String(user._id)); //TODO:Check
         try {
             const user=await UserModel.aggregate([
-                {$match:{id:userId}},
+                {$match:{_id:userId}},
                 {$unwind:'$messages'},
                 {$sort:{'messages.createdAt':-1}},
                 {$group:{_id:'$_id',messages:{$push:'$messages'}}}

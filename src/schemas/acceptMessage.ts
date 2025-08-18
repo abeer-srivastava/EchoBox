@@ -2,5 +2,5 @@ import {z} from "zod";
 
 
 export const acceptMessageSchema=z.object({
-    acceptMessages:z.string()
+    acceptMessages:z.boolean()
 });

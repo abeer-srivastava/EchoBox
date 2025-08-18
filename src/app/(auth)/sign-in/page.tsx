@@ -31,6 +31,7 @@ function Page() {
             identifier:data.identifier,
             password:data.password
         });
+        console.log("outside url",result);//TODO:
         if(result?.error){
             if(result.error === "CredentialsSignin"){
                 toast.warning("Login Failed",{description:"Incorrect Username or Password"});
@@ -39,10 +40,10 @@ function Page() {
                 toast.error("Error",{description:result.error});
             }
         }
-        if(result?.url){
-            console.log(result.url)
-            router.replace("/");
-        }
+      if (result?.url) {
+        console.log("inside url",result.url)
+      router.replace('/dashboard-user');
+    }
     };
 
 
