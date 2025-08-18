@@ -112,6 +112,8 @@ function Dashboard() {
   };
 
   return (
+    <div className="min-h-screen p-10 w-full bg-gradient-to-b from-emerald-50 via-white to-lime-50">
+
     <div className="my-10 mx-4 lg:mx-auto w-full max-w-6xl space-y-8 bg-gradient-to-b from-emerald-50 via-white to-lime-50">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -188,6 +190,7 @@ function Dashboard() {
           </p>
         )}
       </div>
+    </div>
     </div>
   );
 }

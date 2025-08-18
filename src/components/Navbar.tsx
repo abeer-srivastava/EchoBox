@@ -51,8 +51,9 @@ function Navbar() {
                 variant="default"
                 className="flex items-center gap-2"
                 onClick={() => signOut()}
+                
               >
-                <LogOut className="w-4 h-4" /> Logout
+                <LogOut  className="w-4 h-4" /><Link href="/"> Logout</Link>
               </Button>
             </div>
           ) : (

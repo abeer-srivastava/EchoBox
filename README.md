@@ -1,36 +1,70 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🌐 Mystery Message
 
-## Getting Started
+**Mystery Message** is a full-stack web app built with [Next.js](https://nextjs.org/) that lets users send and receive **anonymous messages**. It focuses on **privacy, security, and fun**, making it perfect for honest feedback, playful secrets, and real connections.
 
-First, run the development server:
+---
+
+## 🚀 Highlights
+
+* 🔒 Anonymous Messaging — Send & receive without revealing identity
+* 🔑 Secure Authentication — Sign-up, login, email verification
+* 📬 Real-Time Inbox — Sorted by newest first
+* 🎚 Accept/Block Messages — Toggle receiving messages
+* 🤖 AI-Powered Suggestions — Engaging prompts via Google Gemini
+* 🎨 Modern UI — Responsive, light/dark themes
+* 📧 Email Verification — Powered by Resend + React Email
+* 🧑‍💻 Unique Profiles — Shareable links for each user
+
+---
+
+## 🛠 Tech Stack
+
+* **Frontend:** Next.js, React, Tailwind CSS, Framer Motion
+* **Backend:** Next.js API Routes, MongoDB (Mongoose)
+* **Auth:** NextAuth.js (JWT)
+* **AI:** Google Gemini
+* **Email:** Resend + React Email
+* **Validation:** Zod
+
+---
+
+## 📂 Core Features
+
+* User registration with **real-time username check**
+* Email verification before account activation
+* Unique profile link: `/u/[username]`
+* Secure login + JWT sessions
+* Dashboard to manage messages
+* AI-generated suggested questions
+
+---
+
+## ⚡ Quick Start
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Then open 👉 [http://localhost:3000](http://localhost:3000)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Set up `.env` with:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```env
+MONGODB_URI=your-mongodb-uri
+NEXTAUTH_SECRET=your-secret
+RESEND_API_KEY=your-resend-key
+```
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## 👤 Author
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Built by **Abeer Srivastava**
+Powered by **Next.js, MongoDB, NextAuth, Google Gemini**
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## 📜 License
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+MIT License

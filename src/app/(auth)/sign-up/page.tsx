@@ -82,7 +82,8 @@ function Page() {
 // bg-[#5e736c]
 // bg-[#a9ccbd]
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gradient-to-b from-emerald-50 via-white to-lime-50">
+    
+    <div className="flex justify-center items-center min-h-screen text-black ">
       <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow-md">
         <div className="text-center">
           <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl mb-6">
@@ -151,7 +152,7 @@ function Page() {
                 </FormItem>
               )}
             />
-            <Button  variant="default" className="p-4 w-full" type="submit" disabled={isSubmitting} >
+            <Button  variant="default" className="p-4 w-full m-2" type="submit" disabled={isSubmitting} >
                 {!isSubmitting?("SignUp"):(<><Loader className="mr-2 h-4 w-4 animate-spin"/>Please Wait</>)}
             </Button>
           </form>
@@ -159,7 +160,7 @@ function Page() {
          <div className="text-center mt-4">
           <p>
             Already a member?{' '}
-            <Link href="/sign-in" className="text-green-600 hover:text-blue-800">
+            <Link href="/sign-in" className="text-green-600 hover:text-green-800">
               Sign in
             </Link>
           </p>

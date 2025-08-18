@@ -2,11 +2,11 @@ import dbConnection from "@/lib/dbConnect";
 import UserModel from "@/model/User";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../auth/[...nextauth]/options";
-import { Session, User } from "next-auth";
-import { success } from "zod";
+
 import mongoose from "mongoose";
 
 export async function GET(request:Request) {
+        await dbConnection();
         const session = await getServerSession(authOptions)
         // console.log("here are the sessions that needs to be corrected ======",session);
         const user=session?.user;

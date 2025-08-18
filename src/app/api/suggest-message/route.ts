@@ -20,10 +20,10 @@ export async function POST(req: NextRequest) {
     // send as a data stream response
     return result.toTextStreamResponse();
 
-  } catch (error:any) {
+  } catch (error) {
     console.error('Gemini API error:', error);
     return new Response(
-      JSON.stringify({ error: error.message ?? 'Unexpected error' }),
+      JSON.stringify({ error: 'Unexpected error' }),
       { status: 500, headers: { 'Content-Type': 'application/json' } }
     );
   }

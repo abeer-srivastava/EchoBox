@@ -56,6 +56,7 @@ export async function POST(request: Request) {
 }
 export async function GET(request: Request) {
   await dbConnection();
+  console.log(request);
   try {
     const session = await getServerSession(authOptions);
     const user: User = session?.user;
