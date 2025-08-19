@@ -1,6 +1,6 @@
-# 🌐 Mystery Message
+# 🌐 EchoBox
 
-**Mystery Message** is a full-stack web app built with [Next.js](https://nextjs.org/) that lets users send and receive **anonymous messages**. It focuses on **privacy, security, and fun**, making it perfect for honest feedback, playful secrets, and real connections.
+**EchoBox** is a full-stack web app built with [Next.js](https://nextjs.org/) that lets users send and receive **anonymous messages**. It focuses on **privacy, security, and fun**, making it perfect for honest feedback, playful secrets, and real connections.
 
 ---
 
