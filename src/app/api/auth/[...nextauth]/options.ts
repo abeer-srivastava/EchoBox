@@ -14,13 +14,17 @@ export const authOptions: NextAuthOptions = {
         email: { label: 'Email', type: 'text' },
         password: { label: 'Password', type: 'password' },
       },
-async authorize(credentials: any): Promise<any> {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+async authorize(credentials: Record<"email" | "password", string> | undefined): Promise<any> {
         await dbConnection();
+        if(!credentials) return null;
         try {
+          const {email}=credentials;
+
             const user= await UserModel.findOne({
                 $or:[
-                    {email:credentials.identifier},
-                    {username:credentials.identifier}
+                    {email},
+                    {username:email}
                 ],
             });
             if(!user){

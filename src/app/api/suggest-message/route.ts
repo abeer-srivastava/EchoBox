@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
       prompt,
       maxOutputTokens: 400,
     });
-
+    console.log(req)
     // send as a data stream response
     return result.toTextStreamResponse();
 

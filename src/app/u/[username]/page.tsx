@@ -39,8 +39,6 @@ export default function SendMessage() {
   const [message, setMessage] = useState("");
 
   const {
-    complete,
-    completion,
     isLoading: isSuggestLoading,
     error,
   } = useCompletion({

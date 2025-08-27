@@ -1,9 +1,7 @@
 "use client";
 import {
   Card,
-  CardAction,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -23,7 +21,6 @@ import { X } from "lucide-react";
 import { Message } from "@/model/User";
 import axios, { AxiosError } from "axios";
 import { toast } from "sonner";
-import mongoose from "mongoose";
 import { ApiResponse } from "@/types/ApiResponse";
 import dayjs from 'dayjs';
 

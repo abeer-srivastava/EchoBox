@@ -1,4 +1,4 @@
-import mongoose, { mongo } from "mongoose";
+import mongoose from "mongoose";
 
 type ConnectionObject={
     isConnected?:number
@@ -11,7 +11,7 @@ async function dbConnection():Promise<void>{
         return;
     }
     try {
-        const db=await mongoose.connect(process.env.MONGO_URI||"")
+        const db=await mongoose.connect(process.env.MONGO_URL||"")
         // console.log(db);
         // console.log(db.connections);
         connection.isConnected=db.connections[0].readyState;

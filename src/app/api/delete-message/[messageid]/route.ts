@@ -3,7 +3,9 @@ import { getServerSession } from "next-auth";
 import dbConnection from "@/lib/dbConnect";
 import { User } from "next-auth";
 import { authOptions } from "../../auth/[...nextauth]/options";
-export async function DELETE(request:Request,{params}:{params:{messageid:string}}){
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export async function DELETE(request:Request,{params}:any){
 
     const messageid=params.messageid;
     await dbConnection();
