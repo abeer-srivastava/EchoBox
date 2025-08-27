@@ -7,6 +7,7 @@ import mongoose from "mongoose";
 
 export async function GET(request:Request) {
         await dbConnection();
+        console.log(request);
         const session = await getServerSession(authOptions)
         // console.log("here are the sessions that needs to be corrected ======",session);
         const user=session?.user;
