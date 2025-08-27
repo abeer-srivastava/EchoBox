@@ -1,45 +1,103 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
-@custom-variant dark (&:is(.dark *));
+@layer base {
+  :root {
+    /* Light mode variables */
+    --background: oklch(95.31% 0.0496 169.04);
+    --secondary-background: oklch(100% 0 0);
+    --foreground: oklch(0% 0 0);
+    --main-foreground: oklch(0% 0 0);
+    --main: oklch(77.54% 0.1681 162.78);
+    --border: oklch(0% 0 0);
+    --ring: oklch(0% 0 0);
+    --overlay: oklch(0% 0 0 / 0.8);
+    --shadow: 2px 2px 0px 0px var(--border);
+    
+    /* Chart colors */
+    --chart-1: #00D696;
+    --chart-2: #7A83FF;
+    --chart-3: #FACC00;
+    --chart-4: #FF4D50;
+    --chart-5: #0099FF;
+    --chart-active-dot: #000;
+    
+    /* Fonts */
+    --font-sans: var(--font-poppins);
+    --font-heading: var(--font-cinzel);
+    
+    /* Gradient background */
+    --background-gradient: linear-gradient(
+      135deg,
+      oklch(98% 0.02 180),
+      oklch(96% 0.04 200),
+      oklch(98% 0.03 160)
+    );
+  }
 
-:root {
-  --background: oklch(95.31% 0.0496 169.04);
-  --secondary-background: oklch(100% 0 0);
-  --foreground: oklch(0% 0 0);
-  --main-foreground: oklch(0% 0 0);
-  --main: oklch(77.54% 0.1681 162.78);
-  --border: oklch(0% 0 0);
-  --ring: oklch(0% 0 0);
-  --overlay: oklch(0% 0 0 / 0.8);
-  --shadow: 2px 2px 0px 0px var(--border);
-  --chart-1: #00D696;
-  --chart-2: #7A83FF;
-  --chart-3: #FACC00;
-  --chart-4: #FF4D50;
-  --chart-5: #0099FF;
-  --chart-active-dot: #000;
-  --font-sans: var(--font-poppins);
-  --font-heading: var(--font-cinzel);
+  .dark {
+    /* Dark mode variables - ALL DEFINED */
+    --background: oklch(22.71% 0.0252 182.05);
+    --secondary-background: oklch(23.93% 0 0);
+    --foreground: oklch(92.49% 0 0);
+    --main-foreground: oklch(100% 0 0); /* Changed to white for dark mode */
+    --main: oklch(70.54% 0.1525 162.97);
+    --border: oklch(40% 0 0); /* Lighter border for dark mode */
+    --ring: oklch(100% 0 0);
+    --overlay: oklch(0% 0 0 / 0.8);
+    --shadow: 2px 2px 0px 0px var(--border);
+    
+    /* Dark mode chart colors */
+    --chart-1: #00BD84;
+    --chart-2: #7A83FF;
+    --chart-3: #E0B700;
+    --chart-4: #FF6669;
+    --chart-5: #008AE5;
+    --chart-active-dot: #fff;
+    
+    /* Dark mode gradient */
+    --background-gradient: linear-gradient(
+      135deg,
+      oklch(25% 0.03 180),
+      oklch(22% 0.04 200),
+      oklch(28% 0.03 160)
+    );
+  }
+
+  /* Shadcn/ui compatibility */
+  :root,
+  .dark {
+    --card: var(--secondary-background);
+    --card-foreground: var(--foreground);
+    --popover: var(--secondary-background);
+    --popover-foreground: var(--foreground);
+    --primary: var(--main);
+    --primary-foreground: var(--main-foreground);
+    --secondary: var(--secondary-background);
+    --secondary-foreground: var(--foreground);
+    --muted: var(--secondary-background);
+    --muted-foreground: var(--foreground);
+    --accent: var(--chart-2);
+    --accent-foreground: var(--foreground);
+    --destructive: var(--chart-4);
+    --destructive-foreground: #fff;
+    --input: var(--border);
+    --radius: 0.5rem;
+  }
+
+  /* Base styles */
+  body {
+    color: var(--foreground);
+    background-color: var(--background);
+    font-family: var(--font-sans);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: 700;
+  }
 }
 
-.dark {
-  --background: oklch(22.71% 0.0252 182.05);
-  --secondary-background: oklch(23.93% 0 0);
-  --foreground: oklch(92.49% 0 0);
-  --main-foreground: oklch(0% 0 0);
-  --main: oklch(70.54% 0.1525 162.97);
-  --border: oklch(0% 0 0);
-  --ring: oklch(100% 0 0);
-  --shadow: 2px 2px 0px 0px var(--border);
-  --chart-1: #00BD84;
-  --chart-2: #7A83FF;
-  --chart-3: #E0B700;
-  --chart-4: #FF6669;
-  --chart-5: #008AE5;
-  --chart-active-dot: #fff;
-}
-
+/* Tailwind theme integration */
 @theme inline {
   --color-main: var(--main);
   --color-background: var(--background);
@@ -54,7 +112,6 @@
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
-
   --spacing-boxShadowX: 2px;
   --spacing-boxShadowY: 2px;
   --spacing-reverseBoxShadowX: -2px;
@@ -64,106 +121,12 @@
   --font-weight-base: 500;
   --font-weight-heading: 700;
 }
-/*   
-@layer base {
-  body {
-    color: var(--color-foreground);
-    font-family: var(--font-base);
-    background-color: var(--color-background);
-  }
 
-  h1, h2, h3, h4, h5, h6{
-    font-weight: var(--font-weight-heading);
-  }
-} */
- @layer base {
-  :root {
-    /* Light mode */
-    --background: oklch(95.31% 0.0496 169.04);
-    --secondary-background: oklch(100% 0 0);
-    --foreground: oklch(0% 0 0);
-    --main-foreground: oklch(0% 0 0);
-    --main: oklch(77.54% 0.1681 162.78);
-    --border: oklch(0% 0 0);
-    --ring: oklch(0% 0 0);
-    --overlay: oklch(0% 0 0 / 0.8);
-    --shadow: 2px 2px 0px 0px var(--border);
-
-    /* Chart palette */
-    --chart-1: #00D696;
-    --chart-2: #7A83FF;
-    --chart-3: #FACC00;
-    --chart-4: #FF4D50;
-    --chart-5: #0099FF;
-    --chart-active-dot: #000;
-
-    /* Gradient background */
-    --background-gradient: linear-gradient(
-      135deg,
-      oklch(98% 0.02 180),
-      oklch(96% 0.04 200),
-      oklch(98% 0.03 160)
-    );
-
-    --font-sans: var(--font-poppins);
-    --font-heading: var(--font-cinzel);
-  }
-
-  .dark {
-    /* Dark mode */
-    --background: oklch(22.71% 0.0252 182.05);
-    --secondary-background: oklch(23.93% 0 0);
-    --foreground: oklch(92.49% 0 0);
-    --main-foreground: oklch(0% 0 0);
-    --main: oklch(70.54% 0.1525 162.97);
-    --border: oklch(0% 0 0);
-    --ring: oklch(100% 0 0);
-    --shadow: 2px 2px 0px 0px var(--border);
-
-    /* Chart palette */
-    --chart-1: #00BD84;
-    --chart-2: #7A83FF;
-    --chart-3: #E0B700;
-    --chart-4: #FF6669;
-    --chart-5: #008AE5;
-    --chart-active-dot: #fff;
-
-    /* Gradient background */
-    --background-gradient: linear-gradient(
-      135deg,
-      oklch(25% 0.03 180),
-      oklch(22% 0.04 200),
-      oklch(28% 0.03 160)
-    );
-  }
-
-  /* Map to shadcn tokens */
-  :root,
-  .dark {
-    --card: var(--secondary-background);
-    --card-foreground: var(--foreground);
-
-    --popover: var(--secondary-background);
-    --popover-foreground: var(--foreground);
-
-    --primary: var(--main);
-    --primary-foreground: var(--main-foreground);
-
-    --secondary: var(--secondary-background);
-    --secondary-foreground: var(--foreground);
-
-    --muted: var(--secondary-background);
-    --muted-foreground: var(--foreground);
-
-    --accent: var(--chart-2);
-    --accent-foreground: var(--foreground);
-
-    --destructive: var(--chart-4);
-    --destructive-foreground: #fff;
-
-    --input: var(--border);
-    --radius: 0.5rem;
-  }
+/* Force light mode initially to debug */
+/* Remove this after confirming it works */
+html {
+  color-scheme: light;
 }
-
-
+html.dark {
+  color-scheme: dark;
+}
