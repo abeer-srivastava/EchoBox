@@ -6,7 +6,7 @@ import { Users, Lock, Zap, Globe, ShieldCheck, Sparkles, Github, Mail } from "lu
 
 export default function About() {
   return (
-    <section className="py-20 px-6 md:px-12 lg:px-20 bg-gradient-to-b from-emerald-50 via-white to-lime-50 dark:bg-neutral-900">
+    <section className="text-black py-20 px-6 md:px-12 lg:px-20 bg-gradient-to-b from-emerald-50 via-white to-lime-50 dark:bg-neutral-900">
       <div className="max-w-5xl mx-auto text-center">
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
