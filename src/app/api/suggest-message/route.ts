@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
 
     // use Gemini instead of OpenAI
     const result = streamText({
-      model: google('gemini-1.5-flash'), // you can also use gemini-1.5-pro
+      model: google('gemini-1.5-flash'), 
       prompt,
       maxOutputTokens: 400,
     });

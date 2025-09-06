@@ -15,36 +15,43 @@ export const authOptions: NextAuthOptions = {
         password: { label: 'Password', type: 'password' },
       },
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-async authorize(credentials: Record<"email" | "password", string> | undefined): Promise<any> {
-        await dbConnection();
-        if(!credentials) return null;
-        try {
-          const {email}=credentials;
+async authorize(credentials: Record<string, string> | undefined): Promise<any> {
+  await dbConnection();
+  if (!credentials) return null;
 
-            const user= await UserModel.findOne({
-                $or:[
-                    {email},
-                    {username:email}
-                ],
-            });
-            if(!user){
-                throw new Error("No User Found With this UserName OR Email")
-            }
-            if(user && !user?.isVerified){
-                throw new Error('Please verify your account before logging in');
-            }
-            const isPasswordCorrect=await bcrypt.compare(credentials.password,user.password);
-            if(isPasswordCorrect){
-                return user;
-            }
-            else{
-                throw new Error("Incorrect Password");
-            }
-        } catch (error) {
-          console.log(error);
-            throw new Error("Error in Authoptions")
-        }
-      },
+  try {
+    // NextAuth sends it as "identifier" by default
+      const identifier = credentials.email || credentials.identifier;
+      const password = credentials.password;
+
+      console.log("Identifier:", identifier);
+
+      const user = await UserModel.findOne({
+        $or: [{ email: identifier }, { username: identifier }],
+      });
+
+      console.log("Found user:", user);
+
+      if (!user) {
+        throw new Error("No User Found With this Username or Email");
+      }
+
+      if (!user.isVerified) {
+        throw new Error("Please verify your account before logging in");
+      }
+
+      const isPasswordCorrect = await bcrypt.compare(password, user.password);
+      if (!isPasswordCorrect) {
+        throw new Error("Incorrect Password");
+      }
+
+      return user;
+    } catch (error) {
+      console.error("Authorize error:", error);
+      throw new Error("Error in Authoptions");
+    }
+  }
+,
     }),
   ],
   callbacks:{

@@ -86,7 +86,7 @@ export default function SendMessage() {
   };
 
   return (
-    <div className="container mx-auto my-12 p-6 max-w-3xl space-y-12">
+    <div className="text-black container mx-auto my-12 p-6 max-w-3xl space-y-12">
       {/* Hero Section */}
       <div className="text-center space-y-3">
         <h1 className="text-4xl font-extrabold  bg-gradient-to-r from-blue-500 to-teal-500 bg-clip-text text-transparent">
@@ -150,7 +150,7 @@ export default function SendMessage() {
       </Card>
 
       {/* Suggested Messages */}
-      <div className="space-y-4">
+      <div className="text-black space-y-4">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-bold">Need Inspiration?</h2>
           <Button
