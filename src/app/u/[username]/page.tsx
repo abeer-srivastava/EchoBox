@@ -90,7 +90,7 @@ export default function SendMessage() {
       {/* Hero Section */}
       <div className="text-center space-y-3">
         <h1 className="text-4xl font-extrabold  bg-gradient-to-r from-blue-500 to-teal-500 bg-clip-text text-transparent">
-          Send a Mystery Message
+          Send a Echo Message
         </h1>
         <p className="text-gray-600 text-lg">
           Drop a secret note to{" "}

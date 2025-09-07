@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
 import { User } from "next-auth";
 import { Button } from "./ui/button";
-import { BookOpenText, LogOut, LogIn, Menu } from "lucide-react";
+import { BookOpenText, LogOut, LogIn, Menu, MicVocal } from "lucide-react";
 import { ModeToggle } from "@/components/mode-toggle"
 function Navbar() {
   const { data: session } = useSession();
@@ -16,9 +16,9 @@ function Navbar() {
         
         {/* Logo / Brand */}
         <Link href="/" className="flex items-center gap-2">
-          <BookOpenText className="w-7 h-7 text-emerald-500" />
-          <span className="text-2xl font-extrabold tracking-tight font-mono bg-gradient-to-r from-green-400 via-emerald-500 to-lime-600 bg-clip-text text-transparent">
-            Mystery Message
+          <MicVocal  className="w-10 h-10 text-emerald-500" />
+          <span className="text-3xl font-extrabold tracking-tight font-mono text-emerald-500 bg-clip-text ">
+            EchoBox
           </span>
         </Link>
 
@@ -40,7 +40,7 @@ function Navbar() {
           {session ? (
             <div className="flex items-center gap-3">
               {/* Avatar Placeholder */}
-              <div className="w-8 h-8 rounded-full bg-gradient-to-r from-green-400 via-emerald-500 to-lime-400 flex items-center justify-center text-white font-bold">
+              <div className="w-8 h-8 rounded-full  bg-emerald-500  flex items-center justify-center text-white font-bold">
                 {user?.name?.[0] || user?.email?.[0] || "U"}
               </div>
               <span className="hidden md:inline font-mono font-medium text-gray-800">
@@ -68,7 +68,6 @@ function Navbar() {
           <button className="md:hidden p-2 rounded-lg hover:bg-gray-100">
             <Menu className="w-6 h-6" />
           </button>
-          <ModeToggle />
         </div>
       </div>
     </nav>

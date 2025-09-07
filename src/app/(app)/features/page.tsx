@@ -37,7 +37,7 @@ const features = [
   {
     title: "Easy Sharing",
     description:
-      "Generate sharable links to invite friends and collect mystery messages effortlessly.",
+      "Generate sharable links to invite friends and collect Echobox effortlessly.",
     icon: Share2,
     color: "bg-blue-500",
   },
@@ -105,7 +105,7 @@ export default function Features() {
 
       {/* Footer */}
       <footer className="text-center p-6 bg-gray-900 text-gray-400 text-sm ">
-        <p>© 2025 Mystery Message. All rights reserved.</p>
+        <p>© 2025 Echobox. All rights reserved.</p>
         <div className="mt-3 flex justify-center gap-6">
           <Link href="https://twitter.com" className="hover:text-white">
             Twitter

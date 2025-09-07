@@ -37,7 +37,7 @@ export default function Home() {
             Dive into the World of Anonymous Feedback
           </h1>
           <p className="text-base md:text-lg text-gray-700 mb-6">
-            Mystery Message – Where your identity remains a secret.
+            EchoBox – Where your identity remains a secret.
           </p>
           <Button 
             asChild 
@@ -126,7 +126,7 @@ export default function Home() {
 
       {/* Footer */}
       <footer className="text-center p-6 bg-gray-900 text-gray-400 text-sm">
-        <p>© 2025 Mystery Message. All rights reserved.</p>
+        <p>© Echobox. All rights reserved.</p>
         <div className="mt-2 flex justify-center gap-4">
           <Link href="https://twitter.com" className="hover:text-white transition">Twitter</Link>
           <Link href="https://github.com" className="hover:text-white transition">GitHub</Link>

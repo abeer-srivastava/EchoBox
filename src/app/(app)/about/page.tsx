@@ -14,7 +14,7 @@ export default function About() {
           transition={{ duration: 0.5 }}
           className="text-4xl text-black font-extrabold tracking-tight mb-6"
         >
-          About Mystery Message
+          About Echobox
         </motion.h2>
 
         <motion.p
@@ -23,7 +23,7 @@ export default function About() {
           transition={{ delay: 0.2, duration: 0.5 }}
           className=" text-black text-lg text-muted-foreground max-w-3xl mx-auto mb-12"
         >
-          Mystery Message is a fun and secure way to connect with friends, share
+         Echobox is a fun and secure way to connect with friends, share
           secrets, and give honest feedback — all while keeping your identity
           safe. With a focus on{" "}
           <span className="text-black font-semibold">privacy</span>,{" "}
@@ -39,7 +39,7 @@ export default function About() {
           className="text-black text-base text-muted-foreground max-w-2xl mx-auto mb-16"
         >
           Whether you want to strengthen friendships, exchange ideas freely, or
-          just have fun with anonymous messages, Mystery Message is here to
+          just have fun with anonymous messages, Echobox is here to
           create a safe digital space. Our mission is to keep online
           conversations genuine, respectful, and meaningful.
         </motion.p>
@@ -78,7 +78,7 @@ export default function About() {
         <FeatureCard
           icon={<Globe className="w-10 h-10 mb-4 mx-auto text-black dark:text-white" />}
           title="Accessible Anywhere"
-          description="Use Mystery Message across devices seamlessly — no matter where you are."
+          description="Use Echobox across devices seamlessly — no matter where you are."
           delay={0.7}
         />
         <FeatureCard
@@ -101,7 +101,7 @@ export default function About() {
 
           <div className="flex justify-center gap-6">
             <a
-              href="mailto:contact@mysterymessage.app"
+              href="mailto:contact@Echobox.app"
               className="flex items-center gap-2 font-medium hover:underline"
             >
               <Mail className="w-5 h-5" /> Contact
@@ -115,7 +115,7 @@ export default function About() {
               <Github className="w-5 h-5" /> GitHub
             </a>
             <a
-              href="https://mysterymessage.app"
+              href="https://Echobox.app"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-2 font-medium hover:underline"
