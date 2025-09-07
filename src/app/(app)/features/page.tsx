@@ -59,7 +59,7 @@ const features = [
 
 export default function Features() {
   return (
-    <div className="flex flex-col min-h-screen bg-gradient-to-b from-emerald-50 via-white to-lime-50">
+    <div className="text-black flex flex-col min-h-screen bg-gradient-to-b from-emerald-50 via-white to-lime-50">
       {/* Features Section */}
       <section className="py-20 px-6 md:px-12 lg:px-20 flex-1">
         <motion.div
@@ -68,7 +68,7 @@ export default function Features() {
           className="max-w-5xl mx-auto text-center mb-16"
         >
           <h2 className="text-5xl font-extrabold tracking-tight mb-4">
-            🔑 Key Features
+           Key Features
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Everything you need to make mystery messaging <b>fun</b>,{" "}
@@ -76,7 +76,7 @@ export default function Features() {
           </p>
         </motion.div>
 
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+        <div className=" grid gap-8 md:grid-cols-2 lg:grid-cols-3">
           {features.map((feature, idx) => (
             <motion.div
               key={`${idx}-${feature.title}`}
@@ -85,7 +85,7 @@ export default function Features() {
               transition={{ delay: idx * 0.1, type: "spring", stiffness: 60 }}
               viewport={{ once: true }}
             >
-              <Card className="group border-4 border-black shadow-[5px_5px_0px_0px_#000] hover:shadow-[8px_8px_0px_0px_#000] transition-all duration-200 bg-white dark:bg-neutral-900">
+              <Card className="text-white bg-[#08b584] group border-4 border-black shadow-[5px_5px_0px_0px_#000] hover:shadow-[8px_8px_0px_0px_#000] transition-all duration-200 ">
                 <CardContent className="p-8 flex flex-col items-center text-center">
                   <div
                     className={`w-16 h-16 flex items-center justify-center rounded-xl mb-6 text-white ${feature.color}`}

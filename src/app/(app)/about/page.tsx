@@ -6,29 +6,29 @@ import { Users, Lock, Zap, Globe, ShieldCheck, Sparkles, Github, Mail } from "lu
 
 export default function About() {
   return (
-    <section className="text-black py-20 px-6 md:px-12 lg:px-20 bg-gradient-to-b from-emerald-50 via-white to-lime-50 dark:bg-neutral-900">
+    <section className=" py-20 px-6 md:px-12 lg:px-20 bg-gradient-to-b from-emerald-50 via-white to-lime-50 dark:bg-neutral-900">
       <div className="max-w-5xl mx-auto text-center">
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="text-4xl font-extrabold tracking-tight mb-6"
+          className="text-4xl text-black font-extrabold tracking-tight mb-6"
         >
-          👋 About Mystery Message
+          About Mystery Message
         </motion.h2>
 
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2, duration: 0.5 }}
-          className="text-lg text-muted-foreground max-w-3xl mx-auto mb-12"
+          className=" text-black text-lg text-muted-foreground max-w-3xl mx-auto mb-12"
         >
           Mystery Message is a fun and secure way to connect with friends, share
           secrets, and give honest feedback — all while keeping your identity
           safe. With a focus on{" "}
-          <span className="font-semibold">privacy</span>,{" "}
-          <span className="font-semibold">simplicity</span>, and{" "}
-          <span className="font-semibold">engagement</span>, it’s designed to
+          <span className="text-black font-semibold">privacy</span>,{" "}
+          <span className="text-black font-semibold">simplicity</span>, and{" "}
+          <span className="text-black font-semibold">engagement</span>, it’s designed to
           make conversations more exciting and authentic.  
         </motion.p>
 
@@ -36,7 +36,7 @@ export default function About() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4, duration: 0.5 }}
-          className="text-base text-muted-foreground max-w-2xl mx-auto mb-16"
+          className="text-black text-base text-muted-foreground max-w-2xl mx-auto mb-16"
         >
           Whether you want to strengthen friendships, exchange ideas freely, or
           just have fun with anonymous messages, Mystery Message is here to
@@ -88,7 +88,7 @@ export default function About() {
           delay={0.8}
         />
       </div>
-       <footer className="border-t-4 border-black py-10 mt-16 bg-white dark:bg-neutral-900 shadow-[4px_4px_0px_0px_#000]">
+       <footer className="border-t-4 border-black py-10 mt-16 bg-gray-800 shadow-[4px_4px_0px_0px_#000]">
         <div className="max-w-6xl mx-auto px-6 md:px-12 text-center">
           <motion.p
             initial={{ opacity: 0 }}
@@ -146,7 +146,7 @@ function FeatureCard({
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay }}
     >
-      <Card className="border-4 border-black shadow-[4px_4px_0px_0px_#000] bg-white dark:bg-neutral-900 hover:shadow-[6px_6px_0px_0px_#000] transition-all duration-200">
+      <Card className="border-4 border-black shadow-[4px_4px_0px_0px_#000] bg-[#06b383] hover:shadow-[6px_6px_0px_0px_#000] transition-all duration-200">
         <CardContent className="p-6 text-center">
           {icon}
           <h3 className="font-bold text-xl mb-2">{title}</h3>
