@@ -48,13 +48,13 @@ function Page() {
 
 
     return (
-    <div className="text-black flex justify-center items-center min-h-screen bg-gradient-to-b from-emerald-50 via-white to-lime-50">
-      <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow-md">
+    <div className="text-black flex justify-center items-center min-h-screen bg-secondary-background p-6">
+      <div className="w-full max-w-md p-10 space-y-8 bg-white border-[3px] border-border shadow-brutal-lg">
         <div className="text-center">
-          <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl mb-6">
-            Welcome Back to Echobox 
+          <h1 className="text-4xl font-black uppercase tracking-tighter mb-4">
+            Welcome Back 
           </h1>
-          <p className="mb-4">Sign in to continue your secret conversations</p>
+          <p className="font-bold text-black/60 uppercase text-sm">Sign in to your <span className="text-brand-primary">Echobox</span> account</p>
         </div>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -63,9 +63,9 @@ function Page() {
               control={form.control}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email/Username</FormLabel>
+                  <FormLabel className="font-black uppercase">Email/Username</FormLabel>
                   <Input {...field} placeholder="Email/Username"/>
-                  <FormMessage />
+                  <FormMessage className="font-bold text-accent-red" />
                 </FormItem>
               )}
             />
@@ -74,19 +74,19 @@ function Page() {
               control={form.control}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Password</FormLabel>
+                  <FormLabel className="font-black uppercase">Password</FormLabel>
                   <Input type="password" {...field} />
-                  <FormMessage />
+                  <FormMessage className="font-bold text-accent-red" />
                 </FormItem>
               )}
             />
-            <Button className='w-full' type="submit">Sign In</Button>
+            <Button size="lg" className='w-full text-xl font-black uppercase h-14 shadow-brutal-md' type="submit">Sign In</Button>
           </form>
         </Form>
-        <div className="text-center mt-4">
-          <p>
+        <div className="text-center mt-8 pt-6 border-t-[3px] border-border">
+          <p className="font-bold text-black/60 uppercase text-sm">
             Not a member yet?{' '}
-            <Link href="/sign-up" className="text-green-600 hover:text-green-800">
+            <Link href="/sign-up" className="text-brand-primary underline decoration-[2px] underline-offset-4 hover:bg-accent-yellow">
               Sign up
             </Link>
           </p>

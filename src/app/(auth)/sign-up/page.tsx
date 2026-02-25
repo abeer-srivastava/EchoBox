@@ -83,23 +83,23 @@ function Page() {
 // bg-[#a9ccbd]
   return (
     
-    <div className="flex justify-center items-center min-h-screen text-black ">
-      <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow-md">
+    <div className="flex justify-center items-center min-h-screen text-black bg-secondary-background p-6">
+      <div className="w-full max-w-md p-10 space-y-8 bg-white border-[3px] border-border shadow-brutal-lg">
         <div className="text-center">
-          <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl mb-6">
+          <h1 className="text-4xl font-black uppercase tracking-tighter mb-4">
             Join Echobox
           </h1>
-          <p className="mb-4">Sign up to start your anonymous adventure</p>
+          <p className="font-bold text-black/60 uppercase text-sm">Sign up to start your <span className="text-accent-pink">anonymous</span> adventure</p>
         </div>
-        <div className="p-6">
+        <div className="">
         <Form {...form}>
-          <form action="" onSubmit={form.handleSubmit(onSubmit)}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
               control={form.control}
               name="username"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="">Username</FormLabel>
+                  <FormLabel className="font-black uppercase">Username</FormLabel>
                   <FormControl>
                     <Input placeholder="Username" {...field}
                     onChange={(e)=>{
@@ -111,16 +111,16 @@ function Page() {
                    {isCheckingUsername && <Loader className="animate-spin" />}
                   {!isCheckingUsername && usernameMessage && (
                     <p
-                      className={`text-sm ${
+                      className={`text-xs font-bold uppercase ${
                         usernameMessage === 'Username is unique'
-                          ? 'text-green-500'
-                          : 'text-red-500'
+                          ? 'text-accent-green'
+                          : 'text-accent-red'
                       }`}
                     >
                       {usernameMessage}
                     </p>
                   )}
-                  <FormMessage />
+                  <FormMessage className="font-bold text-accent-red" />
                 </FormItem>
               )}
             />
@@ -129,12 +129,12 @@ function Page() {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="mt-4">Email</FormLabel>
+                  <FormLabel className="font-black uppercase">Email</FormLabel>
                   <FormControl>
                     <Input placeholder="Email" {...field}
                     />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage className="font-bold text-accent-red" />
                 </FormItem>
               )}
             />
@@ -143,24 +143,24 @@ function Page() {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="mt-4">Password</FormLabel>
+                  <FormLabel className="font-black uppercase">Password</FormLabel>
                   <FormControl>
                     <Input type="password" placeholder="Password" {...field}
                     />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage className="font-bold text-accent-red" />
                 </FormItem>
               )}
             />
-            <Button  variant="default" className="p-4 w-full m-2" type="submit" disabled={isSubmitting} >
+            <Button size="lg" className="w-full mt-6 text-xl font-black uppercase h-14 shadow-brutal-md" type="submit" disabled={isSubmitting} >
                 {!isSubmitting?("SignUp"):(<><Loader className="mr-2 h-4 w-4 animate-spin"/>Please Wait</>)}
             </Button>
           </form>
         </Form>
-         <div className="text-center mt-4">
-          <p>
+         <div className="text-center mt-8 pt-6 border-t-[3px] border-border">
+          <p className="font-bold text-black/60 uppercase text-sm">
             Already a member?{' '}
-            <Link href="/sign-in" className="text-green-600 hover:text-green-800">
+            <Link href="/sign-in" className="text-brand-primary underline decoration-[2px] underline-offset-4 hover:bg-accent-yellow">
               Sign in
             </Link>
           </p>
