@@ -1,5 +1,5 @@
 import dbConnection from "@/lib/dbConnect";
-import UserModel from "@/model/User";
+import UserModel, { User as MongooseUser } from "@/model/User";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../auth/[...nextauth]/options";
 import { User } from "next-auth";
@@ -31,6 +31,7 @@ export async function GET() {
         username: foundUser.username,
         email: foundUser.email,
         isAcceptingMessages: foundUser.isAcceptingMessages,
+        privacyType: foundUser.privacyType || 'anonymous-only',
         hiddenWords: foundUser.hiddenWords || [],
         pauseUntil: foundUser.pauseUntil,
       },
@@ -57,10 +58,10 @@ export async function POST(request: Request) {
     );
   }
 
-  const { username, isAcceptingMessages, hiddenWords, pauseUntil } = await request.json();
+  const { username, isAcceptingMessages, privacyType, hiddenWords, pauseUntil } = await request.json();
 
   try {
-    const updateData: any = {};
+    const updateData: Partial<MongooseUser> = {};
     if (username !== undefined) {
       // Check if username is already taken if changing it
       const existingUser = await UserModel.findOne({ username });
@@ -73,6 +74,7 @@ export async function POST(request: Request) {
       updateData.username = username;
     }
     if (isAcceptingMessages !== undefined) updateData.isAcceptingMessages = isAcceptingMessages;
+    if (privacyType !== undefined) updateData.privacyType = privacyType;
     if (hiddenWords !== undefined) updateData.hiddenWords = hiddenWords;
     if (pauseUntil !== undefined) updateData.pauseUntil = pauseUntil;
 

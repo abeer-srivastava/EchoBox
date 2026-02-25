@@ -3,7 +3,7 @@ import UserModel from "@/model/User";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../auth/[...nextauth]/options";
 
-import mongoose from "mongoose";
+// import mongoose from "mongoose";
 
 export async function GET(request: Request) {
   await dbConnection();
@@ -27,7 +27,11 @@ export async function GET(request: Request) {
         .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 
       return Response.json(
-        { success: true, messages: publicMessages },
+        { 
+          success: true, 
+          messages: publicMessages,
+          privacyType: user.privacyType || 'anonymous-only'
+        },
         { status: 200 }
       );
     } catch (error) {

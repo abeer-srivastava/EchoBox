@@ -5,6 +5,7 @@ export interface Message extends Document {
   createdAt: Date;
   replyText?: string;
   repliedAt?: Date;
+  senderName?: string;
 }
 
 const MessageSchema: Schema<Message> = new mongoose.Schema({
@@ -23,6 +24,9 @@ const MessageSchema: Schema<Message> = new mongoose.Schema({
   repliedAt: {
     type: Date,
   },
+  senderName: {
+    type: String,
+  },
 });
 
 export interface User extends Document {
@@ -33,6 +37,7 @@ export interface User extends Document {
   verifyCodeExpiry: Date; 
   isVerified: boolean;
   isAcceptingMessages: boolean;
+  privacyType: 'anonymous-only' | 'allow-named';
   hiddenWords: string[];
   pauseUntil?: Date;
   messages: Message[];
@@ -71,6 +76,11 @@ const UserSchema: Schema<User> = new mongoose.Schema({
   isAcceptingMessages: {
     type: Boolean,
     default: true,
+  },
+  privacyType: {
+    type: String,
+    enum: ['anonymous-only', 'allow-named'],
+    default: 'anonymous-only',
   },
   hiddenWords: {
     type: [String],

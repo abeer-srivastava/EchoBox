@@ -5,6 +5,7 @@ import axios, { AxiosError } from "axios";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Loader2, Sparkles, Send, User, Mail } from "lucide-react";
+import { Message } from "@/model/User";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -40,9 +41,11 @@ const initialMessageString =
 export default function SendMessage() {
   const params = useParams<{ username: string }>();
   const username = params.username;
-  const [message, setMessage] = useState("");
-  const [publicMessages, setPublicMessages] = useState<any[]>([]);
+  // const [message, setMessage] = useState("");
+  const [publicMessages, setPublicMessages] = useState<Message[]>([]);
   const [isFetchingMessages, setIsFetchingMessages] = useState(false);
+  const [privacyType, setPrivacyType] = useState<'anonymous-only' | 'allow-named'>('anonymous-only');
+  const [senderName, setSenderName] = useState("");
 
   const {
     isLoading: isSuggestLoading,
@@ -64,18 +67,21 @@ export default function SendMessage() {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    const fetchPublicMessages = async () => {
+    const fetchPublicData = async () => {
       setIsFetchingMessages(true);
       try {
-        const response = await axios.get<ApiResponse>(`/api/get-messages?username=${username}`);
+        const response = await axios.get<ApiResponse & { privacyType?: 'anonymous-only' | 'allow-named' }>(`/api/get-messages?username=${username}`);
         setPublicMessages(response.data.messages || []);
+        if (response.data.privacyType) {
+          setPrivacyType(response.data.privacyType);
+        }
       } catch (error) {
-        console.error("Failed to fetch public messages", error);
+        console.error("Failed to fetch public data", error);
       } finally {
         setIsFetchingMessages(false);
       }
     };
-    fetchPublicMessages();
+    fetchPublicData();
   }, [username]);
 
   const handleMessageClick = (message: string) => {
@@ -88,10 +94,12 @@ export default function SendMessage() {
       const response = await axios.post<ApiResponse>("/api/send-message", {
         ...data,
         username,
+        senderName: privacyType === 'allow-named' ? senderName : undefined,
       });
 
       toast.success(response.data.message);
       form.reset({ content: "" });
+      setSenderName("");
     } catch (error) {
       const axiosError = error as AxiosError<ApiResponse>;
       toast.error("Error", {
@@ -134,6 +142,17 @@ export default function SendMessage() {
         <CardContent className="p-8">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              {privacyType === 'allow-named' && (
+                <div className="space-y-2">
+                  <label className="text-xl font-black uppercase">Your Name (Optional)</label>
+                  <Input
+                    placeholder="Enter your name or stay anonymous..."
+                    value={senderName}
+                    onChange={(e) => setSenderName(e.target.value)}
+                    className="border-[3px] border-black rounded-none text-lg font-bold focus:ring-0 focus:border-black"
+                  />
+                </div>
+              )}
               <FormField
                 control={form.control}
                 name="content"
@@ -196,7 +215,7 @@ export default function SendMessage() {
           {error ? (
             <p className="text-accent-red font-bold">{error.message}</p>
           ) : (
-            parseStringMessages(message || initialMessageString).map((msg, index) => (
+            parseStringMessages(initialMessageString).map((msg, index) => (
               <button
                 key={index}
                 className="text-left p-4 border-[3px] border-black bg-white font-bold hover:bg-accent-yellow hover:translate-x-[2px] hover:translate-y-[2px] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none transition-all"
@@ -226,14 +245,21 @@ export default function SendMessage() {
           <div className="grid gap-10">
             {publicMessages.map((msg, index) => (
               <Card key={index} className="border-[4px] border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] bg-white rounded-none overflow-hidden">
-                <CardHeader className="pb-4">
-                  <div className="text-[12px] font-black text-black uppercase mb-2 px-3 py-1 border-[3px] border-black w-fit bg-white shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
-                    {dayjs(msg.createdAt).format('MMM D, YYYY')}
+                <CardHeader className="p-8 pb-4">
+                  <div className="text-[12px] font-black text-black uppercase mb-4 flex gap-2">
+                    <span className="px-3 py-1 border-[3px] border-black bg-white shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
+                      {dayjs(msg.createdAt).format('MMM D, YYYY')}
+                    </span>
+                    {msg.senderName && (
+                      <span className="px-3 py-1 border-[3px] border-black bg-accent-green shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
+                        FROM: {msg.senderName}
+                      </span>
+                    )}
                   </div>
-                  <CardTitle className="text-3xl font-black tracking-tight leading-none">{msg.content}</CardTitle>
+                  <CardTitle className="text-4xl font-black tracking-tight leading-none">{msg.content}</CardTitle>
                 </CardHeader>
-                <CardContent className="pt-2 pb-8">
-                  <div className="mt-4 p-6 bg-accent-yellow border-[4px] border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+                <CardContent className="p-8 pt-0 pb-10">
+                  <div className="p-6 bg-accent-yellow border-[4px] border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
                     <div className="flex items-center gap-3 mb-4">
                       <div className="w-10 h-10 border-[3px] border-black bg-black flex items-center justify-center shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
                         <User className="w-6 h-6 text-white" />
@@ -245,7 +271,7 @@ export default function SendMessage() {
                         </span>
                       </div>
                     </div>
-                    <p className="font-black text-xl text-black leading-tight italic">"{msg.replyText}"</p>
+                    <p className="font-black text-xl text-black leading-tight italic">&quot;{msg.replyText}&quot;</p>
                   </div>
                 </CardContent>
               </Card>
@@ -266,7 +292,7 @@ export default function SendMessage() {
             Want your own Message Board?
           </h3>
           <p className="text-xl font-bold text-white/70 max-w-xl mx-auto mb-8">
-            Create your account and start receiving anonymous messages today. It's free, fun, and completely anonymous.
+            Create your account and start receiving anonymous messages today. It&apos;s free, fun, and completely anonymous.
           </p>
           <Link href={"/sign-up"}>
             <Button

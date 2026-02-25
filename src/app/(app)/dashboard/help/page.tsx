@@ -2,18 +2,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { 
-  BookOpen, 
   HelpCircle, 
   UserPlus, 
-  Share2, 
-  MessageSquare, 
   Lock, 
-  Globe, 
   ShieldCheck, 
-  XCircle, 
-  PauseCircle,
   Eye,
-  Settings
 } from "lucide-react";
 
 export default function HelpPage() {

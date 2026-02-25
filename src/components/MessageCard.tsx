@@ -133,10 +133,10 @@ export default function MessageCard({ message, onMessageDelete, onReplyUpdate, u
 
 
   return (
-    <Card className="bg-white transition-colors group border-[3px] border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-none">
+    <Card className="bg-white transition-colors group border-[3px] border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] rounded-none">
       <CardHeader className="p-6">
         <div className="flex justify-between items-start gap-4">
-          <CardTitle className="text-xl font-black leading-tight">{localMessage.content}</CardTitle>
+          <CardTitle className="text-3xl font-black leading-tight tracking-tight uppercase">{localMessage.content}</CardTitle>
           <div className="flex gap-2">
             <Button
               variant="neutral"
@@ -174,17 +174,22 @@ export default function MessageCard({ message, onMessageDelete, onReplyUpdate, u
           </div>
         </div>
         
-        <div className="mt-4 flex items-center gap-2">
+        <div className="mt-4 flex items-center gap-2 flex-wrap">
           <div className="bg-accent-yellow px-2 py-1 border-[2px] border-black text-[10px] font-black uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
             {dayjs(localMessage.createdAt).format('MMM D, YYYY')}
           </div>
           <div className="px-2 py-1 bg-white border-[2px] border-black text-[10px] font-black uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
             {dayjs(localMessage.createdAt).format('h:mm A')}
           </div>
+          {localMessage.senderName && (
+            <div className="px-2 py-1 bg-accent-green border-[2px] border-black text-[10px] font-black uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+              FROM: {localMessage.senderName}
+            </div>
+          )}
         </div>
 
         {localMessage.replyText ? (
-          <div className="mt-6 p-4 bg-white border-[3px] border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] relative group/reply">
+          <div className="mt-8 p-6 bg-white border-[3px] border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] relative group/reply">
             <div className="flex justify-between items-center mb-3">
               <div className="flex items-center gap-2">
                 <MessageSquareReply className="w-4 h-4" />
@@ -211,10 +216,10 @@ export default function MessageCard({ message, onMessageDelete, onReplyUpdate, u
                 </Button>
               </div>
             </div>
-            <p className="font-bold text-lg leading-snug">{localMessage.replyText}</p>
+            <p className="font-black text-xl leading-snug italic">&quot;{localMessage.replyText}&quot;</p>
           </div>
         ) : isReplying ? (
-          <div className="mt-6 flex flex-col gap-3 animate-in fade-in slide-in-from-top-2 duration-200">
+          <div className="mt-8 flex flex-col gap-4 animate-in fade-in slide-in-from-top-2 duration-200">
             <textarea
               className="w-full p-4 border-[3px] border-black rounded-none font-bold focus:outline-none focus:ring-0 bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
               value={replyText}

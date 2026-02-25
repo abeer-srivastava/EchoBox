@@ -18,10 +18,25 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+
+
 function Dashboard() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isSwitchLoading, setIsSwitchLoading] = useState(false);
+  const [privacyType, setPrivacyType] = useState<'anonymous-only' | 'allow-named'>('anonymous-only');
+  const [isPrivacyLoading, setIsPrivacyLoading] = useState(false);
 
   const { data: session } = useSession();
 
@@ -32,25 +47,29 @@ function Dashboard() {
   const { watch, setValue } = form;
   const acceptMessages = watch("acceptMessages");
 
-  const fetchAcceptMessage = useCallback(async () => {
+  const fetchSettings = useCallback(async () => {
     setIsSwitchLoading(true);
+    setIsPrivacyLoading(true);
     try {
-      const response = await axios.get<ApiResponse>(`/api/accepting-messages`);
-      setValue("acceptMessages", response.data.isAcceptingMessages ?? false);
+      const response = await axios.get("/api/account");
+      if (response.data.success) {
+        setValue("acceptMessages", response.data.isAcceptingMessages ?? false);
+        setPrivacyType(response.data.privacyType || 'anonymous-only');
+      }
     } catch (error) {
       console.error(error);
       toast.error("Error", {
-        description: "Failed to fetch message settings",
+        description: "Failed to fetch settings",
       });
     } finally {
       setIsSwitchLoading(false);
+      setIsPrivacyLoading(false);
     }
   }, [setValue]);
 
   const fetchMessages = useCallback(
     async (refresh: boolean = false) => {
       setIsLoading(true);
-      setIsSwitchLoading(true);
       try {
         const response = await axios.get<ApiResponse>("/api/get-messages");
         setMessages(response.data.messages || []);
@@ -67,7 +86,6 @@ function Dashboard() {
         });
       } finally {
         setIsLoading(false);
-        setIsSwitchLoading(false);
       }
     },
     [setIsLoading, setMessages]
@@ -76,24 +94,45 @@ function Dashboard() {
   useEffect(() => {
     if (!session || !session.user) return;
     fetchMessages();
-    fetchAcceptMessage();
-  }, [session, setValue, fetchMessages, fetchAcceptMessage]);
+    fetchSettings();
+  }, [session, setValue, fetchMessages, fetchSettings]);
 
   const handleSwitchChange = async () => {
+    setIsSwitchLoading(true);
     try {
-      const response = await axios.post(`api/accepting-messages`, {
-        acceptMessages: !acceptMessages,
+      const response = await axios.post(`/api/account`, {
+        isAcceptingMessages: !acceptMessages,
       });
       setValue("acceptMessages", !acceptMessages);
-      toast.info(response.data.message, {
-        description: response.data.message,
-      });
+      toast.info(response.data.message);
     } catch (error) {
       const axiosError = error as AxiosError<ApiResponse>;
       toast.warning("Error", {
         description:
-          axiosError.response?.data.message ?? "Failed to fetch messages",
+          axiosError.response?.data.message ?? "Failed to update status",
       });
+    } finally {
+      setIsSwitchLoading(false);
+    }
+  };
+
+  const handlePrivacyChange = async (type: 'anonymous-only' | 'allow-named') => {
+    setIsPrivacyLoading(true);
+    try {
+      const response = await axios.post("/api/account", { privacyType: type });
+      if (response.data.success) {
+        setPrivacyType(type);
+        toast.success("Privacy updated", {
+          description: `Mode changed to ${type === 'anonymous-only' ? 'Anonymous Only' : 'Allow Named'}`,
+        });
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Error", {
+        description: "Failed to update privacy settings",
+      });
+    } finally {
+      setIsPrivacyLoading(false);
     }
   };
 
@@ -139,7 +178,7 @@ function Dashboard() {
 
       {/* Share Link Card */}
       <Card className="bg-background">
-        <CardHeader className="h-full bg-accent-yellow border-b-[3px] border-border p-6 flex flex-row items-center justify-between">
+        <CardHeader className="h-full bg-accent-yellow border-b-[3px] border-border p-8 flex flex-row items-center justify-between">
           <CardTitle className="text-2xl font-black uppercase">Share Your Link</CardTitle>
           <div className="px-3 py-1 bg-white border-[3px] border-black text-xs font-black shadow-brutal-sm">ACTIVE</div>
         </CardHeader>
@@ -173,7 +212,7 @@ function Dashboard() {
       {/* Settings Row */}
       <div className="grid md:grid-cols-2 gap-6">
         <Card className="bg-accent-green/20">
-          <CardContent className="p-6 flex items-center justify-between">
+          <CardContent className="p-8 flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div className="p-3 border-[3px] border-border bg-accent-green shadow-brutal-sm">
                 <Mail className="w-6 h-6" />
@@ -192,17 +231,53 @@ function Dashboard() {
         </Card>
 
         <Card className="bg-accent-pink/20">
-          <CardContent className="p-6 flex items-center justify-between">
+          <CardContent className="p-8 flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div className="p-3 border-[3px] border-border bg-accent-pink shadow-brutal-sm">
                 <Settings2 className="w-6 h-6" />
               </div>
               <div className="flex flex-col">
                 <span className="font-black uppercase text-sm">Profile Privacy</span>
-                <span className="font-bold text-black/60">Anonymous Only</span>
+                <span className="font-bold text-black/60">
+                  {isPrivacyLoading ? "Updating..." : (privacyType === 'anonymous-only' ? "Anonymous Only" : "Anonymous or Named")}
+                </span>
               </div>
             </div>
-            <Button variant="neutral" size="sm">Edit</Button>
+            
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="neutral" size="sm" disabled={isPrivacyLoading}>
+                  {isPrivacyLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Edit"}
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent className="border-[4px] border-black rounded-none shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] bg-white">
+                <AlertDialogHeader>
+                  <AlertDialogTitle className="text-3xl font-black uppercase tracking-tighter">Choose Message Privacy</AlertDialogTitle>
+                  <AlertDialogDescription className="font-bold text-black/60">
+                    Control whether senders can display their name with their messages.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <div className="grid gap-4 py-4">
+                  <Button 
+                    variant={privacyType === 'anonymous-only' ? 'default' : 'neutral'}
+                    className="w-full justify-start text-lg font-black uppercase p-8 rounded-none border-[3px] border-black shadow-brutal-sm hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all"
+                    onClick={() => handlePrivacyChange('anonymous-only')}
+                  >
+                    Anonymous Only
+                  </Button>
+                  <Button 
+                    variant={privacyType === 'allow-named' ? 'default' : 'neutral'}
+                    className="w-full justify-start text-lg font-black uppercase p-8 rounded-none border-[3px] border-black shadow-brutal-sm hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all"
+                    onClick={() => handlePrivacyChange('allow-named')}
+                  >
+                    Anonymous or Named
+                  </Button>
+                </div>
+                <AlertDialogFooter>
+                  <AlertDialogCancel className="border-[3px] border-black rounded-none font-black uppercase tracking-tighter">Close</AlertDialogCancel>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </CardContent>
         </Card>
       </div>
@@ -213,7 +288,7 @@ function Dashboard() {
       <div className="flex flex-col gap-6">
         <h2 className="text-3xl font-black uppercase tracking-tighter">📩 Received Messages</h2>
         {messages.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
             {messages.map((message) => (
               <MessageCard
                 key={message._id as string}

@@ -3,17 +3,12 @@ import { useState, useEffect } from "react";
 import { useSession, signOut } from "next-auth/react";
 import axios, { AxiosError } from "axios";
 import { toast } from "sonner";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Separator } from "@/components/ui/separator";
+// import { Separator } from "@/components/ui/separator";
 import { 
-  User, 
-  Mail, 
-  Settings, 
-  ShieldAlert, 
-  PauseCircle, 
   Power, 
   Copy, 
   QrCode, 
@@ -25,12 +20,13 @@ import { ApiResponse } from "@/types/ApiResponse";
 
 export default function AccountPage() {
   const { data: session } = useSession();
-  const [isLoading, setIsLoading] = useState(true);
+  // const [isLoading, setIsLoading] = useState(true);
   const [isUpdating, setIsUpdating] = useState(false);
   const [accountData, setAccountData] = useState({
     username: "",
     email: "",
     isAcceptingMessages: true,
+    privacyType: 'anonymous-only' as 'anonymous-only' | 'allow-named',
     hiddenWords: [] as string[],
     pauseUntil: null as string | null,
   });
@@ -38,7 +34,7 @@ export default function AccountPage() {
   const [hiddenWordsText, setHiddenWordsText] = useState("");
 
   const fetchAccountData = async () => {
-    setIsLoading(true);
+    // setIsLoading(true);
     try {
       const response = await axios.get("/api/account");
       const data = response.data;
@@ -46,6 +42,7 @@ export default function AccountPage() {
         username: data.username || "",
         email: data.email || "",
         isAcceptingMessages: data.isAcceptingMessages ?? true,
+        privacyType: data.privacyType || 'anonymous-only',
         hiddenWords: data.hiddenWords || [],
         pauseUntil: data.pauseUntil || null,
       });
@@ -55,7 +52,7 @@ export default function AccountPage() {
       console.error(error);
       toast.error("Failed to load account settings");
     } finally {
-      setIsLoading(false);
+      // setIsLoading(false);
     }
   };
 
@@ -63,7 +60,7 @@ export default function AccountPage() {
     if (session?.user) fetchAccountData();
   }, [session]);
 
-  const updateAccount = async (updates: any) => {
+  const updateAccount = async (updates: Partial<typeof accountData>) => {
     setIsUpdating(true);
     try {
       const response = await axios.post("/api/account", updates);
@@ -213,6 +210,25 @@ export default function AccountPage() {
              </CardContent>
           </Card>
 
+          {/* Privacy Control */}
+          <Card className="border-[3px] border-black rounded-none shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] bg-white">
+             <CardContent className="p-6 flex items-center justify-between">
+                <div className="flex flex-col">
+                   <span className="text-[10px] font-black uppercase tracking-widest text-black/40">Privacy</span>
+                   <span className="text-2xl font-black uppercase tracking-tight">
+                     {accountData.privacyType === 'anonymous-only' ? "Anonymous Only" : "Anonymous or Named"}
+                   </span>
+                   <p className="text-[10px] font-bold text-black/40">Allow senders to include their name.</p>
+                </div>
+                <Button 
+                  onClick={() => updateAccount({ privacyType: accountData.privacyType === 'anonymous-only' ? 'allow-named' : 'anonymous-only' })}
+                  className={`border-[3px] border-black rounded-none px-6 font-black uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all bg-accent-yellow text-black`}
+                >
+                  Switch to {accountData.privacyType === 'anonymous-only' ? 'Named' : 'Anonymous'}
+                </Button>
+             </CardContent>
+          </Card>
+
           {/* Pause Control */}
           <Card className="border-[3px] border-black rounded-none shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] bg-white">
              <CardContent className="p-6 flex items-center justify-between">
@@ -254,7 +270,7 @@ export default function AccountPage() {
                      className="border-[3px] border-black rounded-none min-h-[150px] font-bold focus:ring-0"
                      placeholder="Enter words or phrases, one per line"
                    />
-                   <p className="text-[10px] font-bold text-black/40">Messages containing these words won't be delivered. Separate with commas or new lines.</p>
+                   <p className="text-[10px] font-bold text-black/40">Messages containing these words won&apos;t be delivered. Separate with commas or new lines.</p>
                 </div>
 
                 <Button 

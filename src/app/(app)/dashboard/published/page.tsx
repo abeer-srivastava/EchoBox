@@ -1,7 +1,7 @@
 "use client"
 import MessageCard from "@/components/MessageCard";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
+// import { Separator } from "@/components/ui/separator";
 import { Message } from "@/model/User";
 import { ApiResponse } from "@/types/ApiResponse";
 import axios, { AxiosError } from "axios";
@@ -104,7 +104,7 @@ function PublishedPage() {
             <Loader2 className="w-12 h-12 animate-spin text-black" />
           </div>
         ) : messages.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
             {messages.map((message) => (
               <MessageCard
                 key={message._id as string}
