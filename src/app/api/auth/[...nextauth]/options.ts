@@ -28,7 +28,7 @@ async authorize(credentials: Record<string, string> | undefined): Promise<any> {
 
       const user = await UserModel.findOne({
         $or: [{ email: identifier }, { username: identifier }],
-      });
+      }).select("username email password isVerified isAcceptingMessages");
 
       console.log("Found user:", user);
 

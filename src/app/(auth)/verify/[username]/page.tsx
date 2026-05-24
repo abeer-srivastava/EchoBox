@@ -11,7 +11,8 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
 import { useState } from "react";
-import { Loader2 } from "lucide-react";
+import { Loader2, ShieldAlert } from "lucide-react";
+import { motion } from "framer-motion";
 
 function VerifyAccount() {
   const router = useRouter();
@@ -51,52 +52,91 @@ function VerifyAccount() {
     }
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const containerVariants: any = {
+    hidden: { opacity: 0, y: 12 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        staggerChildren: 0.08,
+        delayChildren: 0.1
+      }
+    }
+  };
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const itemVariants: any = {
+    hidden: { y: 8, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: { duration: 0.4, ease: "easeOut" }
+    }
+  };
+
   return (
-    <div className="flex justify-center items-center min-h-screen text-black bg-gradient-to-b from-emerald-50 via-white to-lime-50">
-      <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow-md">
-        <div className="text-center">
-          <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl mb-6">
+    <div className="flex justify-center items-center min-h-screen bg-background p-6">
+      <motion.div 
+        initial="hidden"
+        animate="visible"
+        variants={containerVariants}
+        className="w-full max-w-md p-8 bg-secondary-background border border-border rounded-2xl shadow-lg relative"
+      >
+        <div className="text-center mb-8">
+          <motion.div 
+            variants={itemVariants} 
+            className="w-12 h-12 rounded-xl bg-brand-primary/10 flex items-center justify-center mx-auto mb-4"
+          >
+            <ShieldAlert className="w-6 h-6 text-brand-primary" />
+          </motion.div>
+          <motion.h1 variants={itemVariants} className="text-3xl font-bold tracking-tight mb-2">
             Verify Your Account
-          </h1>
-          <p className="mb-4">Enter the verification code sent to your email</p>
+          </motion.h1>
+          <motion.p variants={itemVariants} className="text-sm text-muted">
+            Enter the 6-digit verification code sent to your email
+          </motion.p>
         </div>
         
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <FormField
-              name="code"
-              control={form.control}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Verification Code</FormLabel>
-                  <FormControl>
-                    <Input 
-                      placeholder="Enter 6-digit code" 
-                      {...field}
-                      maxLength={6}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <Button 
-              type="submit" 
-              className="w-full" 
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Verifying...
-                </>
-              ) : (
-                "Verify Account"
-              )}
-            </Button>
-          </form>
-        </Form>
-      </div>
+        <motion.div variants={itemVariants}>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <FormField
+                name="code"
+                control={form.control}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm font-semibold text-foreground">Verification Code</FormLabel>
+                    <FormControl>
+                      <Input 
+                        placeholder="Enter 6-digit code" 
+                        className="bg-background tracking-widest text-center text-lg font-bold"
+                        {...field}
+                        maxLength={6}
+                      />
+                    </FormControl>
+                    <FormMessage className="text-xs text-accent-red font-medium" />
+                  </FormItem>
+                )}
+              />
+              <Button 
+                type="submit" 
+                className="w-full" 
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Verifying...
+                  </>
+                ) : (
+                  "Verify Account"
+                )}
+              </Button>
+            </form>
+          </Form>
+        </motion.div>
+      </motion.div>
     </div>
   );
 }

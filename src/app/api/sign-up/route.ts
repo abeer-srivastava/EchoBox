@@ -14,7 +14,7 @@ export async function POST(request: Request) {
     const existingVerifiedUserByUsername = await UserModel.findOne({
       username,
       isVerified: true,
-    });
+    }).select("username");
 
     if (existingVerifiedUserByUsername) {
       return Response.json(
@@ -26,7 +26,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const existingUserByEmail = await UserModel.findOne({ email });
+    const existingUserByEmail = await UserModel.findOne({ email }).select("isVerified");
     const verifyCode = Math.floor(100000 + Math.random() * 900000).toString();
 
     if (existingUserByEmail) {
@@ -40,10 +40,16 @@ export async function POST(request: Request) {
         );
       } else {
         const hashedPassword = await bcrypt.hash(password, 10);
-        existingUserByEmail.password = hashedPassword;
-        existingUserByEmail.verifyCode = verifyCode;
-        existingUserByEmail.verifyCodeExpiry = new Date(Date.now() + 3600000);
-        await existingUserByEmail.save();
+        await UserModel.updateOne(
+          { _id: existingUserByEmail._id },
+          {
+            $set: {
+              password: hashedPassword,
+              verifyCode: verifyCode,
+              verifyCodeExpiry: new Date(Date.now() + 3600000),
+            },
+          }
+        );
       }
     } else {
       const hashedPassword = await bcrypt.hash(password, 10);

@@ -17,7 +17,7 @@ export async function GET() {
   }
 
   try {
-    const foundUser = await UserModel.findById(user._id).select("-password");
+    const foundUser = await UserModel.findById(user._id).select("-password -messages");
     if (!foundUser) {
       return Response.json(
         { success: false, message: "User Not Found" },
@@ -64,7 +64,7 @@ export async function POST(request: Request) {
     const updateData: Partial<MongooseUser> = {};
     if (username !== undefined) {
       // Check if username is already taken if changing it
-      const existingUser = await UserModel.findOne({ username });
+      const existingUser = await UserModel.findOne({ username }).select("username");
       if (existingUser && String(existingUser._id) !== String(user._id)) {
         return Response.json(
           { success: false, message: "Username is already taken" },
@@ -82,7 +82,7 @@ export async function POST(request: Request) {
       user._id,
       { $set: updateData },
       { new: true }
-    );
+    ).select("-messages -password");
 
     if (!updatedUser) {
       return Response.json(

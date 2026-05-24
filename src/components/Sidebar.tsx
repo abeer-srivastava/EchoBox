@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
+import { motion } from "framer-motion";
 
 export default function Sidebar() {
   const pathname = usePathname();
@@ -27,49 +28,89 @@ export default function Sidebar() {
     { name: "Help", href: "/dashboard/help", icon: HelpCircle },
   ];
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const containerVariants: any = {
+    hidden: { opacity: 0, x: -10 },
+    visible: {
+      opacity: 1,
+      x: 0,
+      transition: {
+        staggerChildren: 0.06,
+        delayChildren: 0.1
+      }
+    }
+  };
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const itemVariants: any = {
+    hidden: { opacity: 0, x: -8 },
+    visible: { opacity: 1, x: 0 }
+  };
+
   return (
-    <aside className="fixed left-0 top-0 h-screen w-64 bg-background border-r-[3px] border-border flex flex-col p-6 z-40">
+    <aside className="fixed left-0 top-0 h-screen w-64 bg-background border-r border-border flex flex-col p-5 z-40">
       {/* Logo */}
-      <Link href="/" className="flex items-center gap-2 mb-12 group">
-        <div className="p-2 border-[3px] border-border bg-accent-yellow shadow-brutal-sm group-hover:translate-x-[2px] group-hover:translate-y-[2px] group-hover:shadow-none transition-all">
-          <MicVocal className="w-8 h-8 text-black" />
-        </div>
-        <span className="text-2xl font-black tracking-tighter uppercase">EchoBox</span>
+      <Link href="/" className="flex items-center gap-2.5 mb-10 group">
+        <motion.div 
+          whileHover={{ scale: 1.05 }}
+          className="p-2 rounded-xl bg-brand-primary/10 group-hover:bg-brand-primary/20 transition-colors duration-200"
+        >
+          <MicVocal className="w-6 h-6 text-brand-primary" />
+        </motion.div>
+        <span className="text-lg font-bold tracking-tight font-heading">EchoBox</span>
       </Link>
 
       {/* Navigation Items */}
-      <nav className="flex flex-col gap-4 flex-grow">
+      <motion.nav 
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+        className="flex flex-col gap-1 flex-grow"
+      >
         {navItems.map((item) => {
           const isActive = pathname === item.href;
           return (
-            <Link
-              key={item.name}
-              href={item.href}
-              className={cn(
-                "flex items-center gap-3 p-3 font-bold transition-all border-[3px] border-transparent",
-                isActive 
-                  ? "bg-brand-primary text-white border-black shadow-brutal-sm translate-x-[2px] translate-y-[2px]" 
-                  : "hover:bg-accent-yellow hover:border-black hover:shadow-brutal-sm"
-              )}
-            >
-              <item.icon className="w-5 h-5 text-lg" />
-              <span className="text-lg">{item.name}</span>
-            </Link>
+            <motion.div key={item.name} variants={itemVariants}>
+              <Link
+                href={item.href}
+                className={cn(
+                  "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200",
+                  isActive 
+                    ? "bg-brand-primary/10 text-brand-primary" 
+                    : "text-muted hover:text-foreground hover:bg-white/5"
+                )}
+              >
+                <item.icon className={cn("w-[18px] h-[18px]", isActive ? "text-brand-primary" : "")} />
+                <span>{item.name}</span>
+                {isActive && (
+                  <motion.div 
+                    layoutId="sidebar-active"
+                    className="ml-auto w-1.5 h-1.5 rounded-full bg-brand-primary"
+                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                  />
+                )}
+              </Link>
+            </motion.div>
           );
         })}
-      </nav>
+      </motion.nav>
 
       {/* Sign Out Button */}
-      <div className="mt-auto">
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.5 }}
+        className="mt-auto pt-4 border-t border-border"
+      >
         <Button 
-          variant="danger" 
-          className="w-full flex items-center justify-center gap-2"
+          variant="ghost" 
+          className="w-full flex items-center justify-start gap-2.5 h-10 text-muted hover:text-accent-red font-medium text-sm"
           onClick={() => signOut()}
         >
-          <LogOut className="w-5 h-5" />
+          <LogOut className="w-[18px] h-[18px]" />
           <span>Sign Out</span>
         </Button>
-      </div>
+      </motion.div>
     </aside>
   );
 }

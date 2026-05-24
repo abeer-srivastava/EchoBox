@@ -28,7 +28,7 @@ export async function POST(request: Request) {
       userId,
       { isAcceptingMessages: acceptMessage },
       { new: true }
-    );
+    ).select("-messages");
     if (!updatedUser) {
       return Response.json(
         {
@@ -71,7 +71,7 @@ export async function GET(request: Request) {
       );
     }
     const userId = user._id;
-    const foundUser = await UserModel.findById(userId);
+    const foundUser = await UserModel.findById(userId).select("isAcceptingMessages");
     if (!foundUser) {
       return Response.json(
         {

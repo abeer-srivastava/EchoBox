@@ -8,7 +8,7 @@ export async function POST(request: Request) {
   try {
     const { username, code } = await request.json();
     const decodedUsername = decodeURIComponent(username);
-    const user = await UserModel.findOne({ username: decodedUsername });
+    const user = await UserModel.findOne({ username: decodedUsername }).select("verifyCode verifyCodeExpiry isVerified");
 
     if (!user) {
       return Response.json(
@@ -22,9 +22,11 @@ export async function POST(request: Request) {
     const isCodeNotExpired = new Date(user.verifyCodeExpiry) > new Date();
 
     if (isCodeValid && isCodeNotExpired) {
-      // Update the user's verification status
-      user.isVerified = true;
-      await user.save();
+      // Update the user's verification status atomically
+      await UserModel.updateOne(
+        { _id: user._id },
+        { $set: { isVerified: true } }
+      );
 
       return Response.json(
         { success: true, message: 'Account verified successfully' },

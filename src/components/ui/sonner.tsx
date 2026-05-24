@@ -9,18 +9,18 @@ const Toaster = ({ ...props }: ToasterProps) => {
   return (
     <Sonner
       theme={theme as ToasterProps["theme"]}
-      style={{ fontFamily: "inherit", overflowWrap: "anywhere" }}
+      style={{ fontFamily: "inherit" }}
       toastOptions={{
         unstyled: true,
         classNames: {
           toast:
-            "bg-background text-foreground border-border border-2 font-heading shadow-shadow rounded-base text-[13px] flex items-center gap-2.5 p-4 w-[356px] [&:has(button)]:justify-between",
-          description: "font-base",
+            "bg-secondary-background text-foreground border border-border font-sans shadow-lg rounded-xl text-[13px] flex items-center gap-2.5 p-4 w-[356px] backdrop-blur-sm [&:has(button)]:justify-between",
+          description: "text-muted text-xs",
           actionButton:
-            "font-base border-2 text-[12px] h-6 px-2 bg-main text-main-foreground border-border rounded-base shrink-0",
+            "text-[12px] h-7 px-3 bg-brand-primary text-white rounded-lg font-medium shrink-0",
           cancelButton:
-            "font-base border-2 text-[12px] h-6 px-2 bg-secondary-background text-foreground border-border rounded-base shrink-0",
-          error: "bg-black text-white",
+            "text-[12px] h-7 px-3 bg-secondary-background text-foreground border border-border rounded-lg font-medium shrink-0",
+          error: "bg-accent-red/10 border-accent-red/20 text-accent-red",
           loading:
             "[&[data-sonner-toast]_[data-icon]]:flex [&[data-sonner-toast]_[data-icon]]:size-4 [&[data-sonner-toast]_[data-icon]]:relative [&[data-sonner-toast]_[data-icon]]:justify-start [&[data-sonner-toast]_[data-icon]]:items-center [&[data-sonner-toast]_[data-icon]]:flex-shrink-0",
         },

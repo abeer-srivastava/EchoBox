@@ -2,35 +2,73 @@ import dbConnection from "@/lib/dbConnect";
 import UserModel from "@/model/User";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../auth/[...nextauth]/options";
-
-// import mongoose from "mongoose";
+import mongoose from "mongoose";
 
 export async function GET(request: Request) {
   await dbConnection();
   const { searchParams } = new URL(request.url);
   const username = searchParams.get("username");
+  const page = parseInt(searchParams.get("page") || "1", 10);
+  const limit = parseInt(searchParams.get("limit") || "10", 10);
+  const skip = (page - 1) * limit;
 
   // Public access for profile pages
   if (username) {
     try {
-      const user = await UserModel.findOne({ username });
-      if (!user) {
+      const result = await UserModel.aggregate([
+        { $match: { username } },
+        {
+          $project: {
+            privacyType: 1,
+            filteredMessages: {
+              $filter: {
+                input: { $ifNull: ["$messages", []] },
+                as: "msg",
+                cond: { $ne: [{ $ifNull: ["$$msg.replyText", ""] }, ""] }
+              }
+            }
+          }
+        },
+        {
+          $project: {
+            privacyType: 1,
+            totalMessages: { $size: "$filteredMessages" },
+            paginatedMessages: {
+              $slice: [
+                {
+                  $sortArray: {
+                    input: "$filteredMessages",
+                    sortBy: { createdAt: -1 }
+                  }
+                },
+                skip,
+                limit
+              ]
+            }
+          }
+        }
+      ]);
+
+      if (!result || result.length === 0) {
         return Response.json(
           { success: false, message: "User not found" },
           { status: 404 }
         );
       }
 
-      // Only return messages that have a reply for public view
-      const publicMessages = user.messages
-        .filter((msg) => msg.replyText)
-        .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+      const { privacyType, totalMessages, paginatedMessages } = result[0];
 
       return Response.json(
         { 
           success: true, 
-          messages: publicMessages,
-          privacyType: user.privacyType || 'anonymous-only'
+          messages: paginatedMessages || [],
+          privacyType: privacyType || 'anonymous-only',
+          pagination: {
+            currentPage: page,
+            limit,
+            totalMessages: totalMessages || 0,
+            totalPages: Math.ceil((totalMessages || 0) / limit)
+          }
         },
         { status: 200 }
       );
@@ -55,22 +93,48 @@ export async function GET(request: Request) {
   }
 
   try {
-    const fullUser = await UserModel.findById(user._id);
+    const userId = new mongoose.Types.ObjectId(user._id as string);
+    const result = await UserModel.aggregate([
+      { $match: { _id: userId } },
+      {
+        $project: {
+          totalMessages: { $size: { $ifNull: ["$messages", []] } },
+          paginatedMessages: {
+            $slice: [
+              {
+                $sortArray: {
+                  input: { $ifNull: ["$messages", []] },
+                  sortBy: { createdAt: -1 }
+                }
+              },
+              skip,
+              limit
+            ]
+          }
+        }
+      }
+    ]);
 
-    if (!fullUser) {
+    if (!result || result.length === 0) {
       return Response.json(
         { success: false, message: "User not found" },
         { status: 404 }
       );
     }
 
-    // Sort messages locally for the response
-    const sortedMessages = (fullUser.messages || []).sort(
-      (a, b) => b.createdAt.getTime() - a.createdAt.getTime()
-    );
+    const { totalMessages, paginatedMessages } = result[0];
 
     return Response.json(
-      { success: true, messages: sortedMessages },
+      {
+        success: true,
+        messages: paginatedMessages || [],
+        pagination: {
+          currentPage: page,
+          limit,
+          totalMessages: totalMessages || 0,
+          totalPages: Math.ceil((totalMessages || 0) / limit)
+        }
+      },
       { status: 200 }
     );
   } catch (error) {

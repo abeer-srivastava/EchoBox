@@ -1,6 +1,8 @@
-"use client"
+"use client";
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/ui/button";
 import { Message } from "@/model/User";
 import { ApiResponse } from "@/types/ApiResponse";
 import axios, { AxiosError } from "axios";
@@ -12,13 +14,16 @@ import {
   Clock, 
   TrendingUp, 
   CheckCircle2,
-  Calendar
+  Calendar,
+  Zap,
+  Sparkles
 } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+import { motion } from "framer-motion";
 
 dayjs.extend(relativeTime);
 
@@ -51,11 +56,15 @@ export default function AnalyticsPage() {
 
   if (!session?.user) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="p-8 border-[4px] border-black bg-white shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] text-center">
-          <h2 className="text-3xl font-black uppercase">Access Denied</h2>
-          <p className="mt-2 font-bold text-black/60">Please login to view your analytics.</p>
-        </div>
+      <div className="flex items-center justify-center min-h-[60vh] p-4">
+        <motion.div 
+          initial={{ scale: 0.95, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          className="p-8 border border-border bg-secondary-background rounded-2xl shadow-sm text-center max-w-md w-full"
+        >
+          <h2 className="text-2xl font-bold font-heading text-accent-red">Access Denied</h2>
+          <p className="mt-2 text-sm text-muted">Please login to view your analytics dashboard.</p>
+        </motion.div>
       </div>
     );
   }
@@ -88,149 +97,178 @@ export default function AnalyticsPage() {
 
   const maxVal = Math.max(...last14Days.map(d => Math.max(d.messages, d.replies)), 1);
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const containerVariants: any = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.08,
+      },
+    },
+  };
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const itemVariants: any = {
+    hidden: { y: 12, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: { duration: 0.4, ease: "easeOut" },
+    },
+  };
+
   return (
-    <div className="flex flex-col gap-10 max-w-6xl mx-auto">
+    <motion.div 
+      initial="hidden"
+      animate="visible"
+      variants={containerVariants}
+      className="flex flex-col gap-8 max-w-5xl mx-auto p-4 pb-32"
+    >
       {/* Header */}
-      <header className="flex flex-col gap-4">
+      <motion.header variants={itemVariants} className="flex flex-col gap-3">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-             <div className="p-3 border-[3px] border-black bg-accent-yellow shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-                <BarChart3 className="w-8 h-8 text-black" />
+          <div className="flex items-center gap-3">
+             <div className="p-2.5 bg-brand-primary/10 rounded-xl text-brand-primary">
+                <BarChart3 className="w-6 h-6" />
              </div>
-             <div className="flex flex-col">
-               <h1 className="text-5xl font-black uppercase tracking-tighter leading-none">Analytics</h1>
-             </div>
+             <h1 className="text-3xl md:text-4xl font-bold tracking-tight font-heading">Insights</h1>
           </div>
-          <button
+          <Button
+            variant="outline"
             onClick={() => fetchMessages(true)}
-            className="p-3 border-[3px] border-black bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all"
+            className="h-9 px-4 text-sm font-medium border border-border bg-transparent hover:bg-white/5 hover:border-white/15"
             disabled={isLoading}
           >
-            {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <RefreshCcw className="w-5 h-5" />}
-          </button>
+            {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCcw className="w-4 h-4 mr-1.5 text-brand-primary" />}
+            Refresh
+          </Button>
         </div>
-        <p className="text-xl font-bold text-black/60 mt-1">Activity overview for your inbox.</p>
-      </header>
+        <p className="text-base text-muted max-w-xl">Real-time engagement metrics for your anonymous community.</p>
+      </motion.header>
 
-      <Separator className="h-[3px] bg-black" />
+      <motion.div variants={itemVariants}>
+        <Separator className="bg-border" />
+      </motion.div>
 
       {/* Overview Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <MetricCard 
-          title="Messages" 
-          subtitle="All time received" 
-          value={totalMessages} 
-          icon={<MessageSquare className="w-6 h-6" />}
-          label="Total"
-          accent="bg-accent-blue"
-        />
-        <MetricCard 
-          title="Latest Message" 
-          subtitle="Received" 
-          value={latestMessage} 
-          icon={<Clock className="w-6 h-6" />}
-          label="Recency"
-          accent="bg-accent-green"
-          isString
-        />
-        <MetricCard 
-          title="Response Ratio" 
-          subtitle="Replies as a share of total messages" 
-          value={`${responseRatio}%`} 
-          icon={<TrendingUp className="w-6 h-6" />}
-          label="Replies"
-          accent="bg-accent-pink"
-          isString
-        />
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {[
+          { title: "Total Reach", subtitle: "All-time received messages", value: totalMessages, icon: <MessageSquare className="w-4 h-4" />, label: "Messages", accent: "bg-accent-blue" },
+          { title: "Recent Vibe", subtitle: "Time since last message", value: latestMessage, icon: <Clock className="w-4 h-4" />, label: "Latest", accent: "bg-accent-green", isString: true },
+          { title: "Vibe Check", subtitle: "Inbox reply percentage", value: `${responseRatio}%`, icon: <TrendingUp className="w-4 h-4" />, label: "Ratio", accent: "bg-accent-pink", isString: true }
+        ].map((metric, i) => (
+          <motion.div key={i} variants={itemVariants}>
+            <MetricCard {...metric} />
+          </motion.div>
+        ))}
       </div>
 
       {/* Chart Section */}
-      <Card className="border-[4px] border-black rounded-none shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] bg-white overflow-hidden">
-        <CardHeader className="border-b-[4px] border-black p-6 flex flex-row items-center justify-between">
-          <div className="flex flex-col gap-1">
-            <CardTitle className="text-2xl font-black uppercase tracking-tight flex items-center gap-2">
-              <Calendar className="w-6 h-6" />
-              Last 14 Days
-            </CardTitle>
-            <p className="font-bold text-black/60">Compare message volume and replies over time.</p>
-          </div>
-          <div className="flex items-center gap-4 font-black uppercase text-xs">
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 bg-accent-blue border-[2px] border-black" />
-              <span>Messages</span>
+      <motion.div variants={itemVariants}>
+        <Card className="bg-secondary-background border border-border rounded-2xl shadow-sm overflow-hidden">
+          <CardHeader className="border-b border-border p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-brand-primary/5">
+            <div className="flex flex-col gap-1">
+              <CardTitle className="text-base font-bold font-heading flex items-center gap-2">
+                <Calendar className="w-4 h-4 text-brand-primary" />
+                Growth Velocity
+              </CardTitle>
+              <p className="text-xs text-muted">Comparing message volume and published replies over 14 days.</p>
             </div>
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 bg-accent-pink border-[2px] border-black" />
-              <span>Replies</span>
+            <div className="flex items-center gap-4 text-xs font-semibold">
+              <div className="flex items-center gap-1.5">
+                <div className="w-2.5 h-2.5 rounded-full bg-brand-primary" />
+                <span className="text-muted">Messages</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <div className="w-2.5 h-2.5 rounded-full bg-accent-blue" />
+                <span className="text-muted">Replies</span>
+              </div>
             </div>
-          </div>
-        </CardHeader>
-        <CardContent className="p-8 flex flex-col gap-12">
-          {/* Messages Bar Chart */}
-          <div className="flex flex-col gap-4">
-            <span className="text-xs font-black uppercase tracking-widest text-black/40">Messages Received</span>
-            <div className="flex items-end justify-between h-48 gap-2">
-              {last14Days.map((day, idx) => (
-                <div key={idx} className="flex-1 flex flex-col items-center gap-3 h-full justify-end group">
-                  <div 
-                    className="w-full bg-accent-blue border-[3px] border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all hover:-translate-y-1 relative"
-                    style={{ height: `${(day.messages / maxVal) * 100}%`, minHeight: '8px' }}
-                  >
-                     <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-black text-white px-2 py-0.5 text-[10px] font-black opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                        {day.messages} MSG
-                     </div>
+          </CardHeader>
+          <CardContent className="p-8 flex flex-col gap-10">
+            {/* Messages Bar Chart */}
+            <div className="flex flex-col gap-4">
+              <div className="flex items-center gap-1.5">
+                <Zap className="w-4 h-4 text-brand-primary" />
+                <span className="text-xs font-bold uppercase tracking-wider text-muted">Daily Inbound Flow</span>
+              </div>
+              <div className="flex items-end justify-between h-40 gap-1.5">
+                {last14Days.map((day, idx) => (
+                  <div key={idx} className="flex-1 flex flex-col items-center gap-2 h-full justify-end group/bar">
+                    <motion.div 
+                      initial={{ height: 0 }}
+                      animate={{ height: `${(day.messages / maxVal) * 100}%` }}
+                      transition={{ delay: 0.2 + (idx * 0.03), duration: 0.4, ease: "easeOut" }}
+                      className="w-full bg-brand-primary rounded-t-md relative cursor-default transition-opacity hover:opacity-85"
+                      style={{ minHeight: '4px' }}
+                    >
+                       <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-black text-white px-2 py-0.5 rounded text-[10px] font-semibold opacity-0 group-hover/bar:opacity-100 transition-opacity whitespace-nowrap z-20 shadow-sm border border-border">
+                          {day.messages} MSG
+                       </div>
+                    </motion.div>
+                    <span className="text-[9px] font-semibold text-muted tracking-tighter">{day.label}</span>
                   </div>
-                  <span className="text-[10px] font-black uppercase text-black/40">{day.label}</span>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-          </div>
 
-          <Separator className="h-[2px] bg-black/10" />
+            <Separator className="border-dashed" />
 
-          {/* Replies Bar Chart */}
-          <div className="flex flex-col gap-4">
-            <span className="text-xs font-black uppercase tracking-widest text-black/40">Replies Sent</span>
-            <div className="flex items-end justify-between h-48 gap-2">
-              {last14Days.map((day, idx) => (
-                <div key={idx} className="flex-1 flex flex-col items-center gap-3 h-full justify-end group">
-                  <div 
-                    className="w-full bg-accent-pink border-[3px] border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all hover:-translate-y-1 relative"
-                    style={{ height: `${(day.replies / maxVal) * 100}%`, minHeight: '8px' }}
-                  >
-                     <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-black text-white px-2 py-0.5 text-[10px] font-black opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                        {day.replies} REP
-                     </div>
+            {/* Replies Bar Chart */}
+            <div className="flex flex-col gap-4">
+              <div className="flex items-center gap-1.5">
+                <Sparkles className="w-4 h-4 text-accent-blue" />
+                <span className="text-xs font-bold uppercase tracking-wider text-muted">Daily Public Output</span>
+              </div>
+              <div className="flex items-end justify-between h-40 gap-1.5">
+                {last14Days.map((day, idx) => (
+                  <div key={idx} className="flex-1 flex flex-col items-center gap-2 h-full justify-end group/bar">
+                    <motion.div 
+                      initial={{ height: 0 }}
+                      animate={{ height: `${(day.replies / maxVal) * 100}%` }}
+                      transition={{ delay: 0.3 + (idx * 0.03), duration: 0.4, ease: "easeOut" }}
+                      className="w-full bg-accent-blue rounded-t-md relative cursor-default transition-opacity hover:opacity-85"
+                      style={{ minHeight: '4px' }}
+                    >
+                       <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-black text-white px-2 py-0.5 rounded text-[10px] font-semibold opacity-0 group-hover/bar:opacity-100 transition-opacity whitespace-nowrap z-20 shadow-sm border border-border">
+                          {day.replies} REP
+                       </div>
+                    </motion.div>
+                    <span className="text-[9px] font-semibold text-muted tracking-tighter">{day.label}</span>
                   </div>
-                  <span className="text-[10px] font-black uppercase text-black/40">{day.label}</span>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      </motion.div>
 
       {/* Secondary Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
-        <MetricCard 
-          title="Replies Total" 
-          subtitle="Total replies created in your inbox" 
-          value={totalReplies} 
-          icon={<CheckCircle2 className="w-6 h-6" />}
-          label="All Time"
-          accent="bg-white"
-        />
-        <MetricCard 
-          title="Latest Reply" 
-          subtitle="Published" 
-          value={latestReply} 
-          icon={<Clock className="w-6 h-6" />}
-          label="Recency"
-          accent="bg-white"
-          isString
-        />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+        <motion.div variants={itemVariants}>
+          <MetricCard 
+            title="Lifetime Output" 
+            subtitle="Total published replies across your profile" 
+            value={totalReplies} 
+            icon={<CheckCircle2 className="w-4 h-4" />}
+            label="Total"
+            accent="bg-background"
+          />
+        </motion.div>
+        <motion.div variants={itemVariants}>
+          <MetricCard 
+            title="Last Activity" 
+            subtitle="Time since your last public reply" 
+            value={latestReply} 
+            icon={<Clock className="w-4 h-4" />}
+            label="Recency"
+            accent="bg-background"
+            isString
+          />
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
@@ -240,7 +278,6 @@ function MetricCard({
   value, 
   icon, 
   label, 
-  accent,
   isString = false 
 }: { 
   title: string, 
@@ -252,23 +289,21 @@ function MetricCard({
   isString?: boolean
 }) {
   return (
-    <Card className={`border-[4px] border-black rounded-none shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none bg-white p-2`}>
-      <CardHeader className="flex flex-row items-center justify-between pb-2">
-        <CardTitle className="text-xl font-black uppercase tracking-tight">{title}</CardTitle>
-        <div className={`p-2 border-[2px] border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] ${accent}`}>
+    <Card className={`bg-secondary-background border border-border rounded-2xl shadow-sm h-full`}>
+      <CardHeader className="flex flex-row items-center justify-between p-6 pb-2">
+        <CardTitle className="text-base font-bold font-heading">{title}</CardTitle>
+        <div className={`p-2 bg-brand-primary/10 rounded-xl text-brand-primary shrink-0`}>
           {icon}
         </div>
       </CardHeader>
-      <CardContent className="pt-4 flex flex-col gap-4">
-        <div className="flex flex-col">
-          <div className="flex items-end justify-between">
-            <span className={`font-black tracking-tighter uppercase leading-none ${isString ? 'text-3xl' : 'text-6xl'}`}>
-              {value}
-            </span>
-            <span className="text-[10px] font-black uppercase text-black/40 tracking-widest">{label}</span>
-          </div>
-          <p className="mt-3 font-bold text-black/50 text-sm leading-tight">{subtitle}</p>
+      <CardContent className="p-6 pt-2 flex flex-col gap-3">
+        <div className="flex items-end justify-between border-b border-border pb-2">
+          <span className={`font-bold font-heading tracking-tight ${isString ? 'text-2xl' : 'text-5xl'}`}>
+            {value}
+          </span>
+          <span className="text-[10px] font-semibold text-muted uppercase tracking-wider">{label}</span>
         </div>
+        <p className="text-xs text-muted leading-snug">{subtitle}</p>
       </CardContent>
     </Card>
   );

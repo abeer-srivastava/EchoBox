@@ -10,7 +10,7 @@ export default function DashboardLayout({
   return (
     <div className="flex bg-background min-h-screen">
       <Sidebar />
-      <main className="flex-1 ml-64 p-10 bg-secondary-background min-h-screen border-l-[3px] border-border">
+      <main className="flex-1 ml-64 p-8 bg-background min-h-screen">
         {children}
       </main>
     </div>

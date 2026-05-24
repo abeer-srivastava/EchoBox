@@ -16,7 +16,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "./ui/button";
-import { X, Pencil, Trash2, Reply, Loader2, MessageSquareReply, Check, Share2 } from "lucide-react";
+import { X, Pencil, Trash2, Reply, Loader2, MessageSquareReply, Check, Share2, Calendar } from "lucide-react";
 import { Message } from "@/model/User";
 import axios, { AxiosError } from "axios";
 import { toast } from "sonner";
@@ -131,41 +131,45 @@ export default function MessageCard({ message, onMessageDelete, onReplyUpdate, u
     }
   };
 
-
   return (
-    <Card className="bg-white transition-colors group border-[3px] border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] rounded-none">
+    <Card className="bg-secondary-background border border-border rounded-2xl shadow-sm transition-all hover:border-brand-primary/20 duration-200">
       <CardHeader className="p-6">
         <div className="flex justify-between items-start gap-4">
-          <CardTitle className="text-3xl font-black leading-tight tracking-tight uppercase">{localMessage.content}</CardTitle>
-          <div className="flex gap-2">
+          <CardTitle className="text-lg font-semibold leading-snug tracking-tight break-words">
+            {localMessage.content}
+          </CardTitle>
+          <div className="flex gap-1.5 shrink-0">
             <Button
-              variant="neutral"
+              variant="outline"
               size="icon"
-              className="shrink-0 h-10 w-10 border-[3px] border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all"
+              className="size-9 rounded-xl border border-border hover:bg-white/5 transition-colors"
               onClick={copyToClipboard}
               title="Share profile link"
             >
-              <Share2 className="w-5 h-5" />
+              <Share2 className="w-4 h-4 text-muted" />
             </Button>
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <Button variant='danger' size="icon" className="shrink-0 h-10 w-10 border-[3px] border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all bg-accent-red">
-                  <X className="w-5 h-5" />
+                <Button 
+                  variant='danger' 
+                  size="icon" 
+                  className="size-9 rounded-xl bg-accent-red/10 border border-accent-red/20 text-accent-red hover:bg-accent-red hover:text-white transition-colors"
+                >
+                  <X className="w-4 h-4" />
                 </Button>
               </AlertDialogTrigger>
-              <AlertDialogContent className="border-[4px] border-black rounded-none shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] bg-white">
+              <AlertDialogContent className="border border-border rounded-2xl bg-secondary-background max-w-md">
                 <AlertDialogHeader>
-                  <AlertDialogTitle className="text-3xl font-black uppercase tracking-tighter">Are you absolutely sure?</AlertDialogTitle>
-                  <AlertDialogDescription className="font-bold text-black/60">
-                    This action cannot be undone. This will permanently delete
-                    this message from your inbox.
+                  <AlertDialogTitle className="text-xl font-bold">Are you absolutely sure?</AlertDialogTitle>
+                  <AlertDialogDescription className="text-sm text-muted">
+                    This action cannot be undone. This will permanently delete this message from your inbox.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
-                <AlertDialogFooter className="gap-4">
-                  <AlertDialogCancel className="border-[3px] border-black rounded-none font-black uppercase">
+                <AlertDialogFooter className="gap-2 mt-4">
+                  <AlertDialogCancel className="rounded-xl border border-border hover:bg-white/5">
                     Cancel
                   </AlertDialogCancel>
-                  <AlertDialogAction onClick={handleDeleteConfirm} className="bg-accent-red text-white border-[3px] border-black rounded-none font-black uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all">
+                  <AlertDialogAction onClick={handleDeleteConfirm} className="bg-accent-red hover:bg-accent-red/90 text-white rounded-xl">
                     Delete Permanently
                   </AlertDialogAction>
                 </AlertDialogFooter>
@@ -175,53 +179,54 @@ export default function MessageCard({ message, onMessageDelete, onReplyUpdate, u
         </div>
         
         <div className="mt-4 flex items-center gap-2 flex-wrap">
-          <div className="bg-accent-yellow px-2 py-1 border-[2px] border-black text-[10px] font-black uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+          <div className="bg-brand-primary/10 border border-brand-primary/20 text-brand-primary px-2 py-0.5 rounded-md text-[10px] font-semibold flex items-center gap-1">
+            <Calendar className="w-3 h-3" />
             {dayjs(localMessage.createdAt).format('MMM D, YYYY')}
           </div>
-          <div className="px-2 py-1 bg-white border-[2px] border-black text-[10px] font-black uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+          <div className="px-2 py-0.5 bg-white/5 border border-border text-[10px] font-medium text-muted rounded-md">
             {dayjs(localMessage.createdAt).format('h:mm A')}
           </div>
           {localMessage.senderName && (
-            <div className="px-2 py-1 bg-accent-green border-[2px] border-black text-[10px] font-black uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-              FROM: {localMessage.senderName}
+            <div className="px-2 py-0.5 bg-brand-primary/10 border border-brand-primary/20 text-brand-primary text-[10px] font-semibold rounded-md">
+              From: {localMessage.senderName}
             </div>
           )}
         </div>
 
         {localMessage.replyText ? (
-          <div className="mt-8 p-6 bg-white border-[3px] border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] relative group/reply">
+          <div className="mt-6 p-4 bg-background border border-border rounded-xl relative group/reply">
             <div className="flex justify-between items-center mb-3">
               <div className="flex items-center gap-2">
-                <MessageSquareReply className="w-4 h-4" />
-                <span className="text-[10px] font-black uppercase text-black/50">
+                <MessageSquareReply className="w-4 h-4 text-brand-primary" />
+                <span className="text-[11px] text-muted font-medium">
                   REPLY • {dayjs(localMessage.repliedAt).fromNow()}
                 </span>
               </div>
-              <div className="flex gap-1 opacity-0 group-hover/reply:opacity-100 transition-opacity">
+              <div className="flex gap-1.5 opacity-0 group-hover/reply:opacity-100 transition-opacity">
                 <Button 
                   size="icon" 
-                  variant="neutral"
-                  className="h-8 w-8 hover:bg-accent-yellow border-2 border-transparent hover:border-black transition-all" 
+                  variant="ghost"
+                  className="h-7 w-7 rounded-lg hover:bg-white/5 hover:text-brand-primary transition-colors" 
                   onClick={() => setIsReplying(true)}
                 >
-                  <Pencil className="w-4 h-4" />
+                  <Pencil className="w-3.5 h-3.5" />
                 </Button>
                 <Button 
                   size="icon" 
-                  variant="neutral" 
-                  className="h-8 w-8 hover:bg-accent-red hover:text-white border-2 border-transparent hover:border-black transition-all" 
+                  variant="ghost" 
+                  className="h-7 w-7 rounded-lg hover:bg-white/5 hover:text-accent-red transition-colors" 
                   onClick={handleDeleteReply}
                 >
-                  <Trash2 className="w-4 h-4" />
+                  <Trash2 className="w-3.5 h-3.5" />
                 </Button>
               </div>
             </div>
-            <p className="font-black text-xl leading-snug italic">&quot;{localMessage.replyText}&quot;</p>
+            <p className="text-base font-medium leading-relaxed italic text-foreground/90 break-words">&quot;{localMessage.replyText}&quot;</p>
           </div>
         ) : isReplying ? (
-          <div className="mt-8 flex flex-col gap-4 animate-in fade-in slide-in-from-top-2 duration-200">
+          <div className="mt-6 flex flex-col gap-3 animate-in fade-in slide-in-from-top-2 duration-200">
             <textarea
-              className="w-full p-4 border-[3px] border-black rounded-none font-bold focus:outline-none focus:ring-0 bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+              className="w-full p-3 border border-border rounded-xl font-medium focus:outline-none focus:ring-1 focus:ring-brand-primary bg-background text-sm transition-all"
               value={replyText}
               onChange={(e) => setReplyText(e.target.value)}
               placeholder="Write your public reply..."
@@ -231,8 +236,8 @@ export default function MessageCard({ message, onMessageDelete, onReplyUpdate, u
             <div className="flex gap-2 justify-end">
               <Button 
                 size="sm" 
-                variant="neutral" 
-                className="font-black uppercase border-[2px] border-black rounded-none"
+                variant="outline" 
+                className="rounded-xl"
                 onClick={() => {
                   setIsReplying(false);
                   setReplyText(localMessage.replyText || "");
@@ -242,11 +247,11 @@ export default function MessageCard({ message, onMessageDelete, onReplyUpdate, u
               </Button>
               <Button 
                 size="sm" 
-                className="font-black uppercase bg-accent-yellow text-black border-[3px] border-black rounded-none shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all"
+                className="rounded-xl"
                 onClick={handleSaveReply} 
                 disabled={isSavingReply}
               >
-                {isSavingReply ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Check className="w-4 h-4 mr-2" />}
+                {isSavingReply ? <Loader2 className="w-3.5 h-3.5 animate-spin mr-1.5" /> : <Check className="w-3.5 h-3.5 mr-1.5" />}
                 Save Reply
               </Button>
             </div>
@@ -255,14 +260,13 @@ export default function MessageCard({ message, onMessageDelete, onReplyUpdate, u
           <Button
             variant="neutral"
             size="sm"
-            className="mt-6 w-full font-black uppercase border-[3px] border-black rounded-none shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all bg-white hover:bg-accent-yellow"
+            className="mt-5 w-full hover:bg-white/5 border border-border bg-background rounded-xl font-medium"
             onClick={() => setIsReplying(true)}
           >
-            <Reply className="w-4 h-4 mr-2" /> Reply to message
+            <Reply className="w-4 h-4 mr-2 text-brand-primary" /> Reply to message
           </Button>
         )}
       </CardHeader>
     </Card>
   );
-
 }

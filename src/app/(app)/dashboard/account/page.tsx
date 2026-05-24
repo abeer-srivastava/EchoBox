@@ -1,26 +1,34 @@
-"use client"
+"use client";
+
 import { useState, useEffect } from "react";
 import { useSession, signOut } from "next-auth/react";
 import axios, { AxiosError } from "axios";
 import { toast } from "sonner";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-// import { Separator } from "@/components/ui/separator";
+import { Switch } from "@/components/ui/switch";
+import { Separator } from "@/components/ui/separator";
 import { 
-  Power, 
   Copy, 
-  QrCode, 
   LogOut,
   Loader2,
-  Check
+  Check,
+  User,
+  Shield,
+  Zap,
+  LayoutDashboard,
+  Settings,
+  Mail,
+  Lock
 } from "lucide-react";
 import { ApiResponse } from "@/types/ApiResponse";
+import { motion } from "framer-motion";
+import { QRCodeSVG } from "qrcode.react";
 
 export default function AccountPage() {
   const { data: session } = useSession();
-  // const [isLoading, setIsLoading] = useState(true);
   const [isUpdating, setIsUpdating] = useState(false);
   const [accountData, setAccountData] = useState({
     username: "",
@@ -34,7 +42,6 @@ export default function AccountPage() {
   const [hiddenWordsText, setHiddenWordsText] = useState("");
 
   const fetchAccountData = async () => {
-    // setIsLoading(true);
     try {
       const response = await axios.get("/api/account");
       const data = response.data;
@@ -51,8 +58,6 @@ export default function AccountPage() {
     } catch (error) {
       console.error(error);
       toast.error("Failed to load account settings");
-    } finally {
-      // setIsLoading(false);
     }
   };
 
@@ -76,11 +81,18 @@ export default function AccountPage() {
 
   if (!session?.user) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="p-8 border-[4px] border-black bg-white shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] text-center">
-          <h2 className="text-3xl font-black uppercase">Please Login</h2>
-          <p className="mt-2 font-bold text-black/60">You need to be authenticated to manage your account.</p>
-        </div>
+      <div className="flex items-center justify-center min-h-[60vh] p-4">
+        <motion.div 
+          initial={{ scale: 0.95, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          className="p-8 border border-border bg-secondary-background rounded-2xl shadow-sm text-center max-w-md w-full"
+        >
+          <h2 className="text-2xl font-bold font-heading text-accent-red">Access Denied</h2>
+          <p className="mt-2 text-sm text-muted">Manage your profile and inbox settings securely.</p>
+          <Button className="mt-6 h-10 px-5 text-sm font-medium" asChild>
+            <a href="/sign-in">Sign In Now</a>
+          </Button>
+        </motion.div>
       </div>
     );
   }
@@ -93,205 +105,240 @@ export default function AccountPage() {
     toast.success("Link copied to clipboard!");
   };
 
-  return (
-    <div className="flex flex-col gap-10 max-w-4xl mx-auto p-4 pb-20">
-      {/* Header */}
-      <header className="flex flex-col gap-2">
-        <h1 className="text-5xl font-black uppercase tracking-tighter">Account</h1>
-        <p className="text-xl font-bold text-black/60">Manage your profile and inbox settings.</p>
-      </header>
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const containerVariants: any = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.08,
+      },
+    },
+  };
 
-      <div className="grid grid-cols-1 gap-12">
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const itemVariants: any = {
+    hidden: { y: 12, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: { duration: 0.4, ease: "easeOut" },
+    },
+  };
+
+  return (
+    <motion.div 
+      initial="hidden"
+      animate="visible"
+      variants={containerVariants}
+      className="flex flex-col gap-8 max-w-4xl mx-auto p-4 pb-32"
+    >
+      {/* Header */}
+      <motion.header variants={itemVariants} className="flex flex-col gap-3">
+        <div className="flex items-center gap-3">
+          <div className="p-2.5 bg-brand-primary/10 rounded-xl text-brand-primary">
+            <Settings className="w-6 h-6" />
+          </div>
+          <h1 className="text-3xl md:text-4xl font-bold tracking-tight font-heading">Account Settings</h1>
+        </div>
+        <p className="text-base text-muted">Configure your profile, privacy, and moderation rules.</p>
+      </motion.header>
+
+      <motion.div variants={itemVariants}>
+        <Separator className="bg-border" />
+      </motion.div>
+
+      <div className="grid grid-cols-1 gap-8">
         {/* IDENTITY SECTION */}
-        <section className="flex flex-col gap-6">
-          <SectionLabel label="IDENTITY" />
+        <motion.section variants={itemVariants} className="flex flex-col gap-5">
+          <SectionLabel label="Identity System" />
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Share Link Card */}
-            <Card className="border-[3px] border-black rounded-none shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] bg-white overflow-hidden">
-               <CardHeader className="p-6 pb-2 flex flex-row items-center justify-between">
-                 <span className="text-[10px] font-black uppercase tracking-widest text-black/40">Share Your Link</span>
-                 <span className="text-[10px] font-black uppercase tracking-widest text-black/40">Scan or Copy</span>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
+            <Card className="md:col-span-2 bg-secondary-background border border-border rounded-2xl shadow-sm flex flex-col justify-between overflow-hidden">
+               <CardHeader className="p-6 border-b border-border bg-brand-primary/5 flex flex-row items-center justify-between">
+                 <CardTitle className="text-base font-bold font-heading flex items-center gap-2">
+                   <User className="w-4 h-4 text-brand-primary" /> Profile Link
+                 </CardTitle>
                </CardHeader>
                <CardContent className="p-6 flex flex-col gap-4">
-                  <Input 
-                    value={profileUrl} 
-                    readOnly 
-                    className="border-[2px] border-black rounded-none font-bold bg-secondary-background"
-                  />
-                  <Button 
-                    onClick={copyLink}
-                    className="w-full bg-accent-blue text-white border-[3px] border-black rounded-none font-black uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all"
-                  >
-                    <Copy className="w-4 h-4 mr-2" /> Copy Link
-                  </Button>
+                  <p className="text-xs text-muted font-medium">Copy your unique profile link and share it to start receiving anonymous messages.</p>
+                  <div className="flex gap-2">
+                    <Input 
+                      value={profileUrl} 
+                      readOnly 
+                      className="h-10 bg-background font-medium text-xs border border-border"
+                    />
+                    <Button 
+                      onClick={copyLink}
+                      variant="outline"
+                      className="h-10 px-4 text-xs font-semibold shrink-0"
+                    >
+                      <Copy className="w-4 h-4 mr-1.5" /> Copy
+                    </Button>
+                  </div>
                </CardContent>
             </Card>
 
-            {/* QR Code Placeholder Card */}
-            <Card className="border-[3px] border-black rounded-none shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] bg-white flex flex-col items-center justify-center p-6 gap-2">
-               <div className="p-4 border-[3px] border-black bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-                  <QrCode className="w-20 h-20" />
+            <Card className="bg-secondary-background border border-border rounded-2xl shadow-sm flex flex-col items-center justify-center p-6 gap-3">
+               <div className="p-2 border border-border bg-white rounded-xl flex items-center justify-center">
+                  <QRCodeSVG value={profileUrl} size={84} />
                </div>
-               <span className="text-[10px] font-black uppercase text-black/40">Scan to open.</span>
+               <span className="text-[10px] font-bold text-muted tracking-wider uppercase">Scan QR Code</span>
             </Card>
           </div>
 
-          {/* Username Update Card */}
-          <Card className="border-[3px] border-black rounded-none shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] bg-white">
-             <CardHeader className="p-6 pb-2">
-                <span className="text-[10px] font-black uppercase tracking-widest text-black/40">Username</span>
+          <Card className="bg-secondary-background border border-border rounded-2xl shadow-sm overflow-hidden">
+             <CardHeader className="p-6 border-b border-border bg-brand-primary/5">
+                <CardTitle className="text-base font-bold font-heading flex items-center gap-2">
+                  <LayoutDashboard className="w-4 h-4 text-brand-primary" /> Change Username
+                </CardTitle>
              </CardHeader>
              <CardContent className="p-6 flex flex-col gap-4">
-                <Input 
-                  value={newUsername} 
-                  onChange={(e) => setNewUsername(e.target.value)}
-                  className="border-[2px] border-black rounded-none font-black text-xl"
-                  placeholder="Enter new username"
-                />
-                <p className="text-[10px] font-bold text-black/40">3-15 characters. Use letters, numbers, or underscores.</p>
-                <Button 
-                  onClick={() => updateAccount({ username: newUsername })}
-                  disabled={isUpdating || newUsername === accountData.username}
-                  className="w-full bg-accent-blue text-white border-[3px] border-black rounded-none font-black uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all"
-                >
-                  {isUpdating ? <Loader2 className="animate-spin w-4 h-4" /> : "Update username"}
-                </Button>
-             </CardContent>
-          </Card>
-        </section>
-
-        {/* SESSION SECTION */}
-        <section className="flex flex-col gap-6">
-          <SectionLabel label="SESSION" />
-          <Card className="border-[3px] border-black rounded-none shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] bg-white">
-             <CardContent className="p-6 flex flex-col gap-6">
-                <div className="flex items-center gap-4">
-                   <div className="w-16 h-16 border-[3px] border-black bg-accent-yellow shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex items-center justify-center text-3xl font-black">
-                      {session.user.username?.[0]?.toUpperCase() || session.user.email?.[0]?.toUpperCase()}
-                   </div>
-                   <div className="flex flex-col">
-                      <span className="text-2xl font-black uppercase tracking-tight">{session.user.username}</span>
-                      <span className="font-bold text-black/60">{session.user.email}</span>
-                   </div>
+                <p className="text-xs text-muted font-medium">This will change your public profile URL. Your old URL will stop working.</p>
+                <div className="flex gap-2">
+                  <div className="relative flex-1">
+                    <Input 
+                      value={newUsername} 
+                      onChange={(e) => setNewUsername(e.target.value)}
+                      className="h-10 pl-8 bg-background font-semibold text-sm border border-border"
+                      placeholder="new_username"
+                    />
+                    <div className="absolute left-3 top-1/2 -translate-y-1/2 font-bold opacity-30 text-sm">@</div>
+                  </div>
+                  <Button 
+                    onClick={() => updateAccount({ username: newUsername })}
+                    disabled={isUpdating || newUsername === accountData.username}
+                    className="h-10 px-5 text-sm font-semibold shrink-0"
+                  >
+                    {isUpdating ? <Loader2 className="animate-spin w-4 h-4" /> : "Save"}
+                  </Button>
                 </div>
-                <Button 
-                  onClick={() => signOut()}
-                  className="w-full bg-accent-red text-white border-[3px] border-black rounded-none font-black uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all"
-                >
-                  <LogOut className="w-4 h-4 mr-2" /> Sign out
-                </Button>
              </CardContent>
           </Card>
-        </section>
+        </motion.section>
 
         {/* INBOX CONTROLS */}
-        <section className="flex flex-col gap-6">
-          <SectionLabel label="INBOX CONTROLS" />
+        <motion.section variants={itemVariants} className="flex flex-col gap-5">
+          <SectionLabel label="Inbox Controls" />
           
-          {/* Status Control */}
-          <Card className="border-[3px] border-black rounded-none shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] bg-white">
-             <CardContent className="p-6 flex items-center justify-between">
-                <div className="flex flex-col">
-                   <span className="text-[10px] font-black uppercase tracking-widest text-black/40">Status</span>
-                   <span className="text-2xl font-black uppercase tracking-tight">
-                     {accountData.isAcceptingMessages ? "Active" : "Closed"}
-                   </span>
-                   <p className="text-[10px] font-bold text-black/40">
-                     {accountData.isAcceptingMessages ? "Accepting new messages." : "Inbox is currently closed."}
-                   </p>
-                </div>
-                <Button 
-                  onClick={() => updateAccount({ isAcceptingMessages: !accountData.isAcceptingMessages })}
-                  className={`border-[3px] border-black rounded-none px-6 font-black uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all ${accountData.isAcceptingMessages ? "bg-accent-red text-white" : "bg-accent-green text-black"}`}
-                >
-                  <Power className="w-4 h-4 mr-2" /> {accountData.isAcceptingMessages ? "Close" : "Open"}
-                </Button>
-             </CardContent>
-          </Card>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Card className="bg-secondary-background border border-border rounded-2xl shadow-sm">
+               <CardContent className="p-6 flex items-center justify-between gap-6">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2.5 bg-brand-primary/10 rounded-xl text-brand-primary shrink-0">
+                      <Mail className="w-5 h-5" />
+                    </div>
+                    <div className="flex flex-col leading-tight">
+                       <span className="text-[10px] font-bold text-muted uppercase tracking-wider">Accepting Messages</span>
+                       <span className="text-base font-bold text-foreground mt-0.5">
+                         {accountData.isAcceptingMessages ? "Inbox Open" : "Inbox Closed"}
+                       </span>
+                    </div>
+                  </div>
+                  <Switch 
+                    checked={accountData.isAcceptingMessages}
+                    onCheckedChange={(checked) => updateAccount({ isAcceptingMessages: checked })}
+                    disabled={isUpdating}
+                  />
+               </CardContent>
+            </Card>
 
-          {/* Privacy Control */}
-          <Card className="border-[3px] border-black rounded-none shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] bg-white">
-             <CardContent className="p-6 flex items-center justify-between">
-                <div className="flex flex-col">
-                   <span className="text-[10px] font-black uppercase tracking-widest text-black/40">Privacy</span>
-                   <span className="text-2xl font-black uppercase tracking-tight">
-                     {accountData.privacyType === 'anonymous-only' ? "Anonymous Only" : "Anonymous or Named"}
-                   </span>
-                   <p className="text-[10px] font-bold text-black/40">Allow senders to include their name.</p>
-                </div>
-                <Button 
-                  onClick={() => updateAccount({ privacyType: accountData.privacyType === 'anonymous-only' ? 'allow-named' : 'anonymous-only' })}
-                  className={`border-[3px] border-black rounded-none px-6 font-black uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all bg-accent-yellow text-black`}
-                >
-                  Switch to {accountData.privacyType === 'anonymous-only' ? 'Named' : 'Anonymous'}
-                </Button>
-             </CardContent>
-          </Card>
-
-          {/* Pause Control */}
-          <Card className="border-[3px] border-black rounded-none shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] bg-white">
-             <CardContent className="p-6 flex items-center justify-between">
-                <div className="flex flex-col">
-                   <span className="text-[10px] font-black uppercase tracking-widest text-black/40">Pause</span>
-                   <span className="text-2xl font-black uppercase tracking-tight">Ready</span>
-                   <p className="text-[10px] font-bold text-black/40">Temporarily stop new messages.</p>
-                </div>
-                <div className="flex items-center gap-2">
-                   <select className="p-2 border-[3px] border-black rounded-none font-black bg-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-                      <option>6</option>
-                      <option>12</option>
-                      <option>24</option>
-                   </select>
-                   <Button 
-                    className="bg-accent-blue text-white border-[3px] border-black rounded-none font-black uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all"
-                   >
-                     Pause
-                   </Button>
-                </div>
-             </CardContent>
-          </Card>
-        </section>
+            <Card className="bg-secondary-background border border-border rounded-2xl shadow-sm">
+               <CardContent className="p-6 flex items-center justify-between gap-6">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2.5 bg-brand-primary/10 rounded-xl text-brand-primary shrink-0">
+                      <Lock className="w-5 h-5" />
+                    </div>
+                    <div className="flex flex-col leading-tight">
+                       <span className="text-[10px] font-bold text-muted uppercase tracking-wider">Privacy Mode</span>
+                       <span className="text-base font-bold text-foreground mt-0.5">
+                         {accountData.privacyType === 'anonymous-only' ? "Anonymous Only" : "Allow Named"}
+                       </span>
+                    </div>
+                  </div>
+                  <Switch 
+                    checked={accountData.privacyType === 'allow-named'}
+                    onCheckedChange={(checked) => updateAccount({ privacyType: checked ? 'allow-named' : 'anonymous-only' })}
+                    disabled={isUpdating}
+                  />
+               </CardContent>
+            </Card>
+          </div>
+        </motion.section>
 
         {/* MODERATION */}
-        <section className="flex flex-col gap-6">
-          <SectionLabel label="MODERATION" />
-          <Card className="border-[3px] border-black rounded-none shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] bg-white">
-             <CardContent className="p-6 flex flex-col gap-4">
-                <div className="bg-secondary-background p-4 border-[2px] border-black rounded-none text-center">
-                   <p className="font-bold text-black/60">Messages containing these words will be blocked.</p>
+        <motion.section variants={itemVariants} className="flex flex-col gap-5">
+          <SectionLabel label="Moderation Engine" />
+          <Card className="bg-secondary-background border border-border rounded-2xl shadow-sm overflow-hidden">
+             <CardHeader className="p-6 border-b border-border bg-brand-primary/5">
+                <CardTitle className="text-base font-bold font-heading flex items-center gap-2">
+                  <Shield className="w-4 h-4 text-brand-primary" /> Hidden Words Filter
+                </CardTitle>
+             </CardHeader>
+             <CardContent className="p-6 flex flex-col gap-6">
+                <div className="bg-background/50 p-4 border border-border rounded-xl flex items-start gap-2.5">
+                  <Zap className="w-4 h-4 text-brand-primary shrink-0 mt-0.5" />
+                  <p className="text-xs text-muted leading-relaxed">
+                    Incoming messages containing any of these words or phrases will be blocked automatically before reaching your inbox.
+                  </p>
                 </div>
                 
                 <div className="flex flex-col gap-2">
-                   <span className="text-[10px] font-black uppercase tracking-widest text-black/40">Hidden Words</span>
+                   <span className="text-xs font-semibold text-muted">Blocked Phrases List</span>
                    <Textarea 
                      value={hiddenWordsText}
                      onChange={(e) => setHiddenWordsText(e.target.value)}
-                     className="border-[3px] border-black rounded-none min-h-[150px] font-bold focus:ring-0"
-                     placeholder="Enter words or phrases, one per line"
+                     className="min-h-[140px] text-sm p-4 bg-background border border-border focus:ring-0 rounded-xl"
+                     placeholder="Enter words, one per line..."
                    />
-                   <p className="text-[10px] font-bold text-black/40">Messages containing these words won&apos;t be delivered. Separate with commas or new lines.</p>
+                   <p className="text-[10px] text-muted font-medium">Separate items with commas or line breaks.</p>
                 </div>
 
                 <Button 
                   onClick={() => updateAccount({ hiddenWords: hiddenWordsText.split(/[\n,]/).map(w => w.trim()).filter(Boolean) })}
-                  className="w-full bg-accent-blue text-white border-[3px] border-black rounded-none font-black uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all"
+                  disabled={isUpdating}
+                  className="w-full h-11 text-sm font-semibold shrink-0"
                 >
-                  <Check className="w-4 h-4 mr-2" /> Save
+                  {isUpdating ? <Loader2 className="animate-spin w-4 h-4 mr-2" /> : <Check className="w-4 h-4 mr-1.5" />}
+                  Update Moderation Filters
                 </Button>
              </CardContent>
           </Card>
-        </section>
+        </motion.section>
+
+        {/* DANGER ZONE */}
+        <motion.section variants={itemVariants} className="flex flex-col gap-5 pt-8 border-t border-border">
+           <div className="flex items-center gap-3">
+              <span className="text-xs font-bold uppercase tracking-wider text-accent-red">Danger Zone</span>
+              <div className="flex-grow h-[1px] bg-accent-red/20" />
+           </div>
+
+           <Card className="bg-accent-red/5 border border-accent-red/20 rounded-2xl shadow-sm">
+              <CardContent className="p-6 flex flex-col sm:flex-row items-center justify-between gap-6">
+                 <div className="flex flex-col gap-1 text-center sm:text-left">
+                    <h3 className="text-base font-bold font-heading text-accent-red">Log Out Session</h3>
+                    <p className="text-xs text-muted">Log out of your current session on this device.</p>
+                 </div>
+                 <Button 
+                    variant="danger"
+                    onClick={() => signOut()}
+                    className="h-10 px-5 text-sm font-semibold shrink-0 flex items-center gap-1.5"
+                  >
+                    <LogOut className="w-4 h-4" /> Log Out
+                  </Button>
+              </CardContent>
+           </Card>
+        </motion.section>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
 function SectionLabel({ label }: { label: string }) {
   return (
-    <div className="flex items-center gap-4">
-       <span className="text-[10px] font-black uppercase tracking-[0.2em] text-black/40">{label}</span>
-       <div className="flex-grow h-[2px] bg-black/5" />
+    <div className="flex items-center gap-3">
+       <span className="text-xs font-bold uppercase tracking-wider text-brand-primary">{label}</span>
+       <div className="flex-grow h-[1px] bg-border/60" />
     </div>
   );
 }
